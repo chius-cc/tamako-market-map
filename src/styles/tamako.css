@@ -1,0 +1,1134 @@
+/* ==========================================================================
+   Tamako Web Components & Layouts (Prototypes A + B + C + D)
+   ========================================================================== */
+
+.tamako-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 1. 磨砂樱白吸顶栏 & 手机端 #FFB1B5 抽屉 (z-index: 99 / 100) */
+.tamako-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 99;
+  background: var(--tamako-header-glass);
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid var(--tamako-sakura);
+  padding: 14px 0;
+  transition: padding 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.tamako-header.is-scrolled {
+  padding: 8px 0;
+  box-shadow: var(--tamako-shadow-soft);
+}
+
+.tamako-nav-shell {
+  max-width: 1120px;
+  width: 92%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.tamako-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--tamako-ink);
+  text-decoration: none;
+  font-family: var(--tamako-font-display);
+  font-weight: 900;
+  font-size: clamp(1rem, 0.92rem + 0.4vw, 1.2rem);
+  flex-shrink: 0;
+}
+
+.tamako-brand:hover {
+  color: var(--tamako-link);
+}
+
+.tamako-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--tamako-bg-blush);
+  border: 1.5px solid var(--tamako-sakura);
+  color: var(--tamako-link);
+}
+
+.tamako-nav-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.tamako-nav-list {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.8vw, 24px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tamako-nav-list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tamako-link);
+  font-family: var(--tamako-font-display);
+  font-size: 0.95rem;
+  font-weight: 900;
+  text-decoration: none;
+  padding: 6px 4px;
+  transition: opacity 0.2s ease-out;
+}
+
+.tamako-nav-list a:hover {
+  opacity: 0.78;
+  text-decoration: underline;
+}
+
+.tamako-burger {
+  display: none;
+}
+
+/* 2. 三色彩篷顶带 + 看板鸟搭话气泡 */
+.tamako-awning-band {
+  padding-top: 86px;
+  padding-bottom: 36px;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(251, 248, 241, 0) 64%,
+      var(--tamako-bg-washi) 100%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      #dbfdf6 0 48px,
+      #f9eded 48px 96px,
+      #f3fbd7 96px 144px
+    );
+  border-bottom: 1.5px dashed var(--tamako-rule-craft);
+}
+
+.tamako-hero-grid {
+  max-width: 1120px;
+  width: 92%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.85fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.tamako-hero-card {
+  background: var(--tamako-surface);
+  border-radius: var(--tamako-radius-island);
+  border: 1.5px solid var(--tamako-rule-petal);
+  box-shadow: var(--tamako-shadow-soft);
+  padding: clamp(22px, 3vw, 34px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  position: relative;
+}
+
+.tamako-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 4px 14px;
+  border-radius: var(--tamako-radius-pill);
+  background: var(--tamako-bg-custard);
+  border: 1px solid var(--tamako-frame-gold);
+  color: var(--tamako-ink-roast);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.tamako-hero-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.tamako-hero-vertical-poem {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  padding: 10px 8px;
+  border-radius: 14px;
+  background: var(--tamako-bg-blush);
+  border: 1px dotted var(--tamako-sakura);
+  color: var(--tamako-ink);
+  font-family: var(--tamako-font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  line-height: 1.45;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.tamako-hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tamako-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--tamako-radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.tamako-stat-pill.is-sakura {
+  background: var(--tamako-bg-blush);
+  color: var(--tamako-ink);
+  border: 1px solid var(--tamako-rule-petal);
+}
+
+.tamako-stat-pill.is-mint {
+  background: var(--tamako-mint);
+  color: var(--tamako-mint-ink);
+}
+
+.tamako-stat-pill.is-apricot {
+  background: var(--tamako-apricot);
+  color: var(--tamako-apricot-ink);
+}
+
+.tamako-stat-pill.is-sky {
+  background: var(--tamako-sky);
+  color: var(--tamako-sky-ink);
+}
+
+/* 德拉看板搭话卡片 */
+.tamako-mascot-panel {
+  background: var(--tamako-surface);
+  border-radius: var(--tamako-radius-island);
+  border: 1.5px solid var(--tamako-frame-gold);
+  box-shadow: var(--tamako-shadow-soft);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.tamako-mascot-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tamako-mascot-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--tamako-bg-custard);
+  border: 2px solid var(--tamako-frame-gold);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tamako-mascot-name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--tamako-ink);
+}
+
+.tamako-mascot-sub {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--tamako-ink-muted);
+}
+
+.tamako-mascot-bubble {
+  min-height: 76px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--tamako-bg-blush);
+  border: 2px solid var(--tamako-rule-petal);
+  color: var(--tamako-ink);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.65;
+  position: relative;
+}
+
+.tamako-mascot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 3. 糯米白岛容器 (.tamako-island) */
+.tamako-island {
+  max-width: 960px;
+  width: 92%;
+  margin: 28px auto 52px;
+  padding: clamp(22px, 3.6vw, 40px) 0;
+  background: var(--tamako-surface);
+  border-radius: var(--tamako-radius-island);
+  box-shadow: var(--tamako-shadow-soft);
+}
+
+.tamako-island--wide {
+  max-width: 1120px;
+}
+
+.tamako-island-inner {
+  width: 92%;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.tamako-island--wide .tamako-island-inner {
+  max-width: 1040px;
+}
+
+.tamako-stitch-hr {
+  border: 0;
+  border-bottom: 1.5px dotted var(--tamako-rule-stitch);
+  margin: 22px 0;
+}
+
+.tamako-photo-mount {
+  padding: 5px;
+  background: var(--tamako-surface);
+  border: 1.5px solid var(--tamako-frame-gold);
+  border-radius: var(--tamako-radius-thumb);
+  transition: border-color 0.2s ease-out, transform 0.2s var(--tamako-ease);
+}
+
+.tamako-photo-mount:hover {
+  border-color: var(--tamako-frame-gold-hover);
+}
+
+/* 通用按钮与胶囊 */
+.tamako-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 6px 14px;
+  border-radius: var(--tamako-radius-pill);
+  border: 1.5px solid var(--tamako-rule-petal);
+  background: var(--tamako-surface);
+  color: var(--tamako-ink);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color 0.18s ease-out,
+    border-color 0.18s ease-out,
+    transform 0.18s var(--tamako-ease);
+}
+
+.tamako-pill-btn:hover:not(:disabled) {
+  background: var(--tamako-bg-blush);
+  border-color: var(--tamako-sakura);
+}
+
+.tamako-pill-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tamako-pill-btn.is-primary {
+  background: var(--tamako-link);
+  border-color: var(--tamako-link);
+  color: #ffffff;
+}
+
+.tamako-pill-btn.is-primary:hover:not(:disabled) {
+  background: var(--tamako-ink);
+  border-color: var(--tamako-ink);
+}
+
+.tamako-pill-btn.is-custard {
+  background: var(--tamako-bg-custard);
+  border-color: var(--tamako-frame-gold);
+  color: var(--tamako-ink-roast);
+}
+
+.tamako-pill-btn.is-custard:hover:not(:disabled) {
+  border-color: var(--tamako-frame-gold-hover);
+}
+
+/* 4. 筛选面板 */
+.tamako-filter-island {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.tamako-filter-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.tamako-work-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tamako-work-tab {
+  min-height: 40px;
+  padding: 7px 16px;
+  border-radius: var(--tamako-radius-pill);
+  border: 1.5px solid var(--tamako-rule-craft);
+  background: var(--tamako-bg-washi);
+  color: var(--tamako-ink-roast);
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.18s ease-out;
+}
+
+.tamako-work-tab:hover {
+  border-color: var(--tamako-sakura);
+  background: var(--tamako-bg-blush);
+}
+
+.tamako-work-tab[aria-pressed='true'] {
+  background: var(--tamako-ink);
+  border-color: var(--tamako-ink);
+  color: #ffffff;
+}
+
+.tamako-search-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 280px;
+  justify-content: flex-end;
+}
+
+.tamako-search-input-wrap {
+  position: relative;
+  flex: 1 1 220px;
+  max-width: 340px;
+}
+
+.tamako-search-input {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 36px 8px 16px;
+  border-radius: var(--tamako-radius-pill);
+  border: 1.5px solid var(--tamako-rule-craft);
+  background: var(--tamako-bg-ivory);
+  color: var(--tamako-ink);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.tamako-search-input::placeholder {
+  color: var(--tamako-ink-muted);
+}
+
+.tamako-search-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--tamako-bg-blush);
+  color: var(--tamako-ink);
+  cursor: pointer;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tamako-filter-block {
+  margin-top: 14px;
+}
+
+.tamako-filter-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tamako-filter-label {
+  font-size: 0.875rem;
+  font-weight: 900;
+  color: var(--tamako-ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tamako-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tamako-ep-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 5px 12px;
+  border-radius: var(--tamako-radius-pill);
+  border: 1.5px solid var(--tamako-rule-petal);
+  background: var(--tamako-surface);
+  color: var(--tamako-ink);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.16s ease-out;
+}
+
+.tamako-ep-chip:hover {
+  background: var(--tamako-bg-blush);
+  border-color: var(--tamako-sakura);
+}
+
+.tamako-ep-chip[aria-pressed='true'] {
+  background: var(--tamako-link);
+  border-color: var(--tamako-link);
+  color: #ffffff;
+}
+
+.tamako-ep-chip.is-empty {
+  opacity: 0.52;
+}
+
+.tamako-ep-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 9999px;
+  background: var(--tamako-bg-custard);
+  color: var(--tamako-ink-roast);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.tamako-ep-chip[aria-pressed='true'] .tamako-ep-count {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+}
+
+.tamako-circle-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tamako-circle-box {
+  flex: 1 1 280px;
+  background: var(--tamako-bg-washi);
+  border: 1px dashed var(--tamako-rule-craft);
+  border-radius: 16px;
+  padding: 10px 12px;
+}
+
+.tamako-circle-title {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: var(--tamako-ink-muted);
+}
+
+.tamako-char-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 34px;
+  padding: 4px 10px;
+  border-radius: var(--tamako-radius-pill);
+  border: 1.5px solid var(--tamako-rule-craft);
+  background: var(--tamako-surface);
+  color: var(--tamako-ink-roast);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease-out, background-color 0.15s ease-out;
+}
+
+.tamako-char-chip:hover {
+  transform: translateY(-1px);
+  border-color: var(--tamako-sakura);
+}
+
+.tamako-char-chip[aria-pressed='true'] {
+  background: var(--tamako-ink);
+  border-color: var(--tamako-ink);
+  color: #ffffff;
+}
+
+.tamako-char-chip.is-empty {
+  opacity: 0.5;
+}
+
+.tamako-char-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* 5. 双色交替圆角规格表 (.tamako-chart) */
+.tamako-chart {
+  border: 1px solid var(--tamako-petal);
+  border-radius: var(--tamako-radius-island-sm);
+  overflow: hidden;
+  margin: 14px 0 22px;
+}
+
+.tamako-chart-row {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  min-height: 3.4rem;
+}
+
+.tamako-chart-row + .tamako-chart-row {
+  border-top: 1px solid var(--tamako-petal);
+}
+
+.tamako-chart-row dt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  text-align: center;
+  font-weight: 900;
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+
+.tamako-chart-row:nth-child(odd) dt {
+  background: var(--tamako-link);
+}
+
+.tamako-chart-row:nth-child(even) dt {
+  background: var(--tamako-ink);
+}
+
+.tamako-chart-row dd {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-weight: 600;
+  color: var(--tamako-ink);
+}
+
+.tamako-chart-row:nth-child(odd) dd {
+  background: var(--tamako-surface);
+}
+
+.tamako-chart-row:nth-child(even) dd {
+  background: var(--tamako-bg-blush);
+}
+
+/* 6. + 旋转 45deg 变 × 的晴空蓝胶囊手风琴 */
+.tamako-accordion {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 22px;
+  border: 0;
+  border-radius: var(--tamako-radius-pill);
+  background: var(--tamako-sky);
+  color: var(--tamako-sky-ink);
+  font-family: var(--tamako-font-display);
+  font-size: clamp(0.95rem, 0.84rem + 0.4vw, 1.15rem);
+  font-weight: 900;
+  cursor: pointer;
+  text-align: left;
+}
+
+.tamako-accordion:hover {
+  filter: brightness(0.97);
+}
+
+.tamako-accordion-icon {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #ffffff;
+  flex-shrink: 0;
+  transition: transform 0.3s var(--tamako-ease);
+}
+
+.tamako-accordion-icon::before,
+.tamako-accordion-icon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  background: var(--tamako-sky-ink);
+  border-radius: 2px;
+}
+
+.tamako-accordion-icon::before {
+  width: 3.5px;
+  height: 18px;
+}
+
+.tamako-accordion-icon::after {
+  width: 18px;
+  height: 3.5px;
+}
+
+.tamako-accordion[aria-expanded='true'] .tamako-accordion-icon {
+  transform: rotate(45deg);
+}
+
+.tamako-accordion-panel {
+  margin-top: 20px;
+}
+
+/* 店方回音批注块 */
+.tamako-staff-reply {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--tamako-bg-blush);
+  border-left: 3.5px solid var(--tamako-reply-warm);
+  color: var(--tamako-reply-warm);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+/* 7. 剧情事件分组卡片流 (EventDirectory) */
+.tamako-directory-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.tamako-group-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 26px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1.5px dotted var(--tamako-rule-stitch);
+}
+
+.tamako-group-heading h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 900;
+  color: var(--tamako-ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tamako-event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+}
+
+.tamako-event-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  background: var(--tamako-bg-ivory);
+  border-radius: 18px;
+  border: 1.5px solid var(--tamako-frame-gold);
+  transition: transform 0.18s var(--tamako-ease), border-color 0.18s ease-out;
+}
+
+.tamako-event-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--tamako-frame-gold-hover);
+}
+
+.tamako-event-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tamako-scene-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--tamako-radius-pill);
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.tamako-scene-tag.tone-sakura {
+  background: var(--tamako-bg-blush);
+  color: var(--tamako-ink);
+  border: 1px solid var(--tamako-sakura);
+}
+.tamako-scene-tag.tone-apricot {
+  background: var(--tamako-apricot);
+  color: var(--tamako-apricot-ink);
+}
+.tamako-scene-tag.tone-mint {
+  background: var(--tamako-mint);
+  color: var(--tamako-mint-ink);
+}
+.tamako-scene-tag.tone-sky {
+  background: var(--tamako-sky);
+  color: var(--tamako-sky-ink);
+}
+.tamako-scene-tag.tone-leaf {
+  background: var(--tamako-leaf);
+  color: var(--tamako-leaf-ink);
+}
+.tamako-scene-tag.tone-navy {
+  background: var(--tamako-demachi-navy);
+  color: #ffffff;
+}
+
+.tamako-event-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--tamako-ink);
+  line-height: 1.4;
+}
+
+.tamako-event-summary {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--tamako-ink-roast);
+  line-height: 1.65;
+}
+
+.tamako-event-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tamako-char-mini {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.tamako-event-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px dotted var(--tamako-rule-craft);
+}
+
+/* 8. 原位详情弹卡 (z-index: 1040 / 1050) */
+.tamako-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1040;
+  background: rgba(92, 34, 38, 0.42);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.tamako-modal-card {
+  position: relative;
+  z-index: 1050;
+  width: 100%;
+  max-width: 800px;
+  max-height: min(88vh, 840px);
+  overflow-y: auto;
+  background: var(--tamako-surface);
+  border-radius: var(--tamako-radius-island);
+  border: 2px solid var(--tamako-petal);
+  box-shadow: var(--tamako-shadow-card);
+  padding: clamp(20px, 3.5vw, 34px);
+}
+
+.tamako-modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.tamako-modal-close {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--tamako-rule-petal);
+  background: var(--tamako-bg-blush);
+  color: var(--tamako-ink);
+  font-size: 1.35rem;
+  font-weight: 900;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tamako-modal-close:hover {
+  background: var(--tamako-sakura);
+  color: #ffffff;
+}
+
+.tamako-quote-box {
+  margin: 14px 0;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: var(--tamako-bg-custard);
+  border: 1px dashed var(--tamako-frame-gold-hover);
+}
+
+.tamako-quote-ja {
+  margin: 0 0 4px;
+  font-weight: 900;
+  color: var(--tamako-ink);
+  font-size: 1rem;
+}
+
+.tamako-quote-zh {
+  margin: 0;
+  color: var(--tamako-ink-roast);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+/* 9. 页脚与右下回顶胶囊 (z-index: 80) */
+.tamako-footer {
+  margin-top: auto;
+  padding: 28px 0 48px;
+  background: linear-gradient(
+    to bottom,
+    var(--tamako-bg-washi) 0%,
+    var(--tamako-bg-custard) 100%
+  );
+  border-top: 1.5px dotted var(--tamako-rule-stitch);
+}
+
+.tamako-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin: 14px 0;
+}
+
+.tamako-pagetop {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border-radius: var(--tamako-radius-pill);
+  border: 2px solid var(--tamako-sakura);
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--tamako-ink);
+  font-family: var(--tamako-font-display);
+  font-weight: 900;
+  font-size: 0.85rem;
+  box-shadow: var(--tamako-shadow-soft);
+  cursor: pointer;
+  transition: transform 0.2s var(--tamako-ease), background-color 0.2s ease-out;
+}
+
+.tamako-pagetop:hover {
+  transform: translateY(-3px);
+  background: var(--tamako-bg-blush);
+}
+
+/* ==========================================================================
+   三段响应式断点：1320px -> 834px -> 768px
+   ========================================================================== */
+@media (max-width: 834px) {
+  .tamako-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tamako-hero-vertical-poem {
+    writing-mode: horizontal-tb;
+    letter-spacing: 0.04em;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .tamako-header {
+    background: var(--tamako-drawer-pink);
+    border-bottom: none;
+    padding: 8px 16px;
+  }
+
+  .tamako-header.is-scrolled {
+    padding: 8px 16px;
+  }
+
+  .tamako-nav-shell {
+    width: 100%;
+  }
+
+  .tamako-burger {
+    position: relative;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 44px;
+    height: 44px;
+    padding: 13px 7px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .tamako-burger span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    border-radius: 2px;
+    background: #ffffff;
+    transition: transform 0.3s ease-out, opacity 0.2s ease-out;
+  }
+
+  .tamako-header.is-open .tamako-burger span:nth-child(1) {
+    transform: translateY(7.5px) rotate(-45deg);
+  }
+  .tamako-header.is-open .tamako-burger span:nth-child(2) {
+    opacity: 0;
+  }
+  .tamako-header.is-open .tamako-burger span:nth-child(3) {
+    transform: translateY(-7.5px) rotate(45deg);
+  }
+
+  .tamako-nav-wrap {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100vh;
+    background: var(--tamako-drawer-pink);
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-out;
+  }
+
+  .tamako-header.is-open .tamako-nav-wrap {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .tamako-nav-list {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .tamako-nav-list a {
+    color: var(--tamako-ink);
+    font-size: 1.25rem;
+  }
+
+  .tamako-awning-band {
+    padding-top: 74px;
+    padding-bottom: 24px;
+  }
+
+  .tamako-island {
+    border-radius: var(--tamako-radius-island-sm);
+    margin: 18px auto 34px;
+    padding: 20px 0;
+  }
+
+  .tamako-hero-card,
+  .tamako-mascot-panel {
+    border-radius: var(--tamako-radius-island-sm);
+  }
+
+  .tamako-hero-title-row {
+    flex-direction: column;
+  }
+
+  .tamako-chart-row {
+    grid-template-columns: 1fr;
+  }
+
+  .tamako-chart-row dt {
+    padding: 8px 12px;
+  }
+
+  .tamako-chart-row dd {
+    padding: 12px 14px;
+  }
+
+  .tamako-modal-card {
+    border-radius: var(--tamako-radius-island-sm);
+  }
+
+  .tamako-circle-box {
+    flex: 1 1 100%;
+  }
+
+  .tamako-pagetop {
+    right: 12px;
+    bottom: 12px;
+    padding: 6px 12px;
+  }
+}

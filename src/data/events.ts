@@ -1,0 +1,959 @@
+import type { StoryEvent } from "../types/tamako";
+
+export const STORY_EVENTS: StoryEvent[] = [
+  // =========================================================================
+  // TV 第 1 话：那个女孩是可爱的年糕店女儿
+  // =========================================================================
+  {
+    id: "ev-01-shidan-morning",
+    episodeId: "ep01",
+    order: 1,
+    titleZh: "清晨疏水与师团桥：日常通学路上的微风",
+    titleJa: "朝の師団橋・通学路の風景",
+    sceneBadge: "第 1 话 · 师团桥通学路",
+    seasonTime: "12 月 · 寒假前晨光",
+    kyotoLocationId: "kyoto-shidan-bridge",
+    characterIds: ["tamako", "midori", "kanna", "mochizou"],
+    tags: ["通学路", "师团桥", "开篇"],
+    summaryZh:
+      "冬日清冽的清晨空气里，玉子、绿与神奈踏着轻快步伐走过琵琶湖疏水上的师团桥去往兔山高校，身旁还跟着举起相机寻找镜头的饼藏。",
+    quoteJa: "おはようございます、たまこちゃん！",
+    quoteZh: "「早上好呀，小玉！」",
+    staffNoteZh:
+      "真实取景自伏见区琵琶湖疏水的师团桥与キトロ桥之间路段，也是全剧最早登场的京都现实通学景色之一。",
+    pilgrimageTipZh: "从京阪藤森站步行向北沿着疏水堤岸散步约 5 分钟即可抵达师团桥。",
+    tone: "apricot",
+    icon: "train",
+  },
+  {
+    id: "ev-01-sashimi-morning",
+    episodeId: "ep01",
+    order: 2,
+    titleZh: "鲜鱼店「さしみ」：鱼谷夫妇的清晨吆喝与街坊寒暄",
+    titleJa: "魚屋「さしみ」の威勢のいい朝",
+    sceneBadge: "第 1 话 · 鲜鱼店さしみ",
+    seasonTime: "12 月 · 年末早市",
+    arcadeLocationId: "sashimi",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["tamako", "shimizuya_tomio", "anko"],
+    tags: ["鲜鱼店", "早市", "街坊日常"],
+    summaryZh:
+      "站在主街北首的鱼铺「さしみ」前，鱼谷隆与真理夫妇一大早就嗓门洪亮地招呼路过的玉子与街坊买菜，还悄悄记下给小玉准备生日小礼物的念头。",
+    quoteJa: "たまちゃん、今日も元気に行ってらっしゃい！",
+    quoteZh: "「小玉，今天也要元气满满地出门哦！」",
+    staffNoteZh:
+      "真实布局参照出町桝形商店街的鲜鱼店「さが喜」，从店铺冰台向拱廊张望的视角是第 1 话实景巡礼经典画面。",
+    tone: "sky",
+    icon: "bird",
+  },
+  {
+    id: "ev-01-deai",
+    episodeId: "ep01",
+    order: 3,
+    titleZh: "花箱里的南国来客：玉子与德拉初遇",
+    titleJa: "花屋で出会った言葉を話す鳥",
+    sceneBadge: "第 1 话 · 花店初遇",
+    seasonTime: "12 月 · 结业式放学后",
+    arcadeLocationId: "florist-princess",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["tamako", "dera", "kaoru"],
+    tags: ["相遇", "花店", "名场面"],
+    summaryZh:
+      "寒假前的放学路上，玉子走进花店「フローリスト プリンセス」帮街坊挑花，没想到从南方运来的夜来香花束中突然摔出一只昏迷又会说人话的白胖小鸟——德拉·莫奇马兹。",
+    quoteJa: "この花、なんていう名前ですか？",
+    quoteZh: "「请问，这朵花叫什么名字呀？」",
+    staffNoteZh:
+      "官网地图「still/03 たまことデラの出会い」对应此场景，正是全作奇迹般日常的真正起点。",
+    pilgrimageTipZh: "可在出町桝形商店街西侧店头体验放学顺道经过花店的动线。",
+    tone: "sakura",
+    icon: "bird",
+  },
+  {
+    id: "ev-01-tamaya-birthday",
+    episodeId: "ep01",
+    order: 4,
+    titleZh: "最忙碌的除夕：差点被忘记的玉子生日",
+    titleJa: "大晦日の忙しい餅屋と誕生日",
+    sceneBadge: "第 1 话 · 玉屋年糕香",
+    seasonTime: "12 月 31 日 · 除夕清晨",
+    arcadeLocationId: "tamaya-shop",
+    kyotoLocationId: "kyoto-futaba",
+    characterIds: ["tamako", "anko", "mamedai", "fuku", "dera"],
+    tags: ["玉屋", "生日", "豆大福"],
+    summaryZh:
+      "每年 12 月 31 日既是「玉屋」最忙碌的年糕旺季，也是玉子的生日。忙碌的父亲豆大把全部心神扑在捣年糕上，只有初来乍到的德拉被软糯豆大福俘获，开始飞不起来地赖在北白川家。",
+    quoteJa: "大晦日が生まれの日なんて、お餅の申し子だねぇ。",
+    quoteZh: "「出生在除夕夜，简直就是年糕赐予的孩子呀。」",
+    staffNoteZh:
+      "「たまや」门面的三片暖帘与店内忙碌柜台灵感来自京都名代豆饼老铺与传统町家饼屋。",
+    pilgrimageTipZh: "想品尝玉屋同款红豆大福的风味灵感，记得早点到出町双叶门口排队。",
+    tone: "apricot",
+    icon: "mochi",
+  },
+  {
+    id: "ev-01-arcade-celebration",
+    episodeId: "ep01",
+    order: 5,
+    titleZh: "拱廊下的意外惊喜：商店街的生日礼物",
+    titleJa: "商店街みんなの誕生日祝い",
+    sceneBadge: "第 1 话 · 街口拱门",
+    seasonTime: "12 月 31 日 · 除夕傍晚",
+    arcadeLocationId: "arcade-entrance",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["tamako", "mochizou", "midori", "kanna", "shimizuya_tomio"],
+    tags: ["庆生", "街坊温情", "入口"],
+    summaryZh:
+      "原来大家一直悄悄记挂着玉子的生日！收摊前后街坊们与饼藏、绿、神奈聚集在兔山商店街送出祝福与生日惊喜，奠定了「人人都爱着某个温柔的人」的商店街底色。",
+    quoteJa: "誕生日、おめでとう、たまちゃん！",
+    quoteZh: "「小玉，生日快乐！」",
+    staffNoteZh:
+      "第 1 话开篇 00:44 的拱门近景与结尾欢笑彼此呼应，展现整条街如大家庭般的亲密感。",
+    tone: "sky",
+    icon: "mochi",
+  },
+
+  // =========================================================================
+  // TV 第 2 话：恋之花盛开的情人节
+  // =========================================================================
+  {
+    id: "ev-02-crossroads-meeting",
+    episodeId: "ep02",
+    order: 6,
+    titleZh: "町内会提案：把情人节带进兔山商店街",
+    titleJa: "商店街バレンタイン大作戦",
+    sceneBadge: "第 2 话 · 十字路口",
+    seasonTime: "2 月初 · 町内会",
+    arcadeLocationId: "arcade-crossroads",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["tamako", "shimizuya_tomio", "kaoru", "gohei"],
+    tags: ["町内会", "情人节", "商店街企划"],
+    summaryZh:
+      "看到城里洋溢着甜滋滋的巧克力氛围，玉子在商店街集会里主动提议「大家也一起搞个情人节企划吧」。在花店、肉店与鱼铺大人们的响应下，商店街挂起粉嫩心形装饰。",
+    quoteJa: "商店街もバレンタインで盛り上げたいんです！",
+    quoteZh: "「我也想用情人节让商店街变得更加热闹起来！」",
+    staffNoteZh:
+      "以商店街中心「サバさん」悬吊区作为街坊议事的心脏，凸显玉子对街区的行动力。",
+    tone: "apricot",
+    icon: "flower",
+  },
+  {
+    id: "ev-02-justmeat-promo",
+    episodeId: "ep02",
+    order: 7,
+    titleZh: "肉店的心形可乐饼与「大路屋」花样促销",
+    titleJa: "ハートコロッケと商店街の恋模様",
+    sceneBadge: "第 2 话 · 肉店与对门",
+    seasonTime: "2 月 14 日 · 午后",
+    arcadeLocationId: "just-meat",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["tamako", "shimizuya_tomio", "gohei", "mochizou", "dera"],
+    tags: ["美食", "可乐饼", "情人节"],
+    summaryZh:
+      "肉店「ジャストミート」推出了热腾腾的爱心形状可乐饼，各家店铺纷纷拿出绝活；对门的「大路屋」也紧跟时髦推出甜点促销，吸引不少年轻人走进平素老派的街巷。",
+    quoteJa: "恋する乙女に、アツアツのハートコロッケどうだい！",
+    quoteZh: "「恋爱中的少女们，来一份热乎乎的心形可乐饼吧！」",
+    staffNoteZh:
+      "「ジャストミート」橙红招牌与绿白条纹遮阳篷在官网 map/still/02 也有专门记录。",
+    tone: "apricot",
+    icon: "mochi",
+  },
+  {
+    id: "ev-02-midori-secret",
+    episodeId: "ep02",
+    order: 8,
+    titleZh: "藏起心意的那颗花朵：绿的温柔守护",
+    titleJa: "ひそやかに咲く花・みどりの想い",
+    sceneBadge: "第 2 话 · 兔山高校",
+    seasonTime: "2 月 14 日 · 傍晚",
+    kyotoLocationId: "kyoto-seibo",
+    characterIds: ["midori", "tamako", "kanna"],
+    tags: ["常盘绿", "暗恋", "校园"],
+    summaryZh:
+      "热闹的情人节落幕，绿亲手做好的巧克力却最终没有作为告白信物递出——比起说出口后可能改变的关系，她选择像一朵悄然盛开的花，继续静静陪在玉子身边。",
+    quoteJa: "どんな想いも花は花。心に咲いて、愛おしい。",
+    quoteZh: "「无论怎样的心意，花就是花。绽放在心间，无比珍爱。」",
+    staffNoteZh:
+      "第 2 话官方梗概中这段诗句点破了绿细腻又克制的情感。",
+    tone: "mint",
+    icon: "baton",
+  },
+
+  // =========================================================================
+  // TV 第 3 话：为酷酷的她心跳加速
+  // =========================================================================
+  {
+    id: "ev-03-new-class",
+    episodeId: "ep03",
+    order: 9,
+    titleZh: "樱花高二新学期：与朝雾史织同班",
+    titleJa: "新学期・クールな史織さんと同じクラス",
+    sceneBadge: "第 3 话 · 兔山高校",
+    seasonTime: "4 月 · 春季开学",
+    kyotoLocationId: "kyoto-seibo",
+    characterIds: ["tamako", "shiori", "midori", "kanna"],
+    tags: ["新学期", "朝雾史织", "校舍"],
+    summaryZh:
+      "升上高二的春天，玉子发现高挑冷酷的羽毛球部王牌朝雾史织成了自己同班同学。其实史织一直渴望与活泼的玉子搭话，却总因为天生安静严肃的表情不知如何开口。",
+    quoteJa: "朝霧さん、今日からお隣だね！",
+    quoteZh: "「朝雾同学，今天开始我们就是同桌啦！」",
+    staffNoteZh:
+      "校舍红砖廊道与体育馆取材自伏见区京都圣母学院周边环境。",
+    tone: "mint",
+    icon: "baton",
+  },
+  {
+    id: "ev-03-dera-crush",
+    episodeId: "ep03",
+    order: 10,
+    titleZh: "德拉一见钟情！突如其来的玉屋茶会",
+    titleJa: "デラの恋とたまやのお茶タイム",
+    sceneBadge: "第 3 话 · 玉屋居间",
+    seasonTime: "4 月 · 放学后",
+    arcadeLocationId: "tamaya-shop",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["shiori", "tamako", "dera", "mamedai", "anko"],
+    tags: ["玉屋", "德拉", "史织"],
+    summaryZh:
+      "对着史织一见倾心的德拉闹出不少笑话，竟阴差阳错把史织带进了「たまや」。喝着温和热茶、吃着热腾腾的年糕点心，史织原本紧绷的肩膀终于在北白川家的暖意中放松下来。",
+    quoteJa: "おいしくって、なんだかほっとするお餅……。",
+    quoteZh: "「真好吃，让人心里一下子就暖起来了的年糕……」",
+    staffNoteZh:
+      "官方「setting/03 居间」内矮桌与茶具的温馨空间，成为史织融入街坊的第一站。",
+    tone: "mint",
+    icon: "bird",
+  },
+  {
+    id: "ev-03-usayu-bath",
+    episodeId: "ep03",
+    order: 11,
+    titleZh: "暖汤融冰：在「うさ湯」与街坊坦诚相见",
+    titleJa: "はじめての銭湯「うさ湯」",
+    sceneBadge: "第 3 话 · 钱汤うさ湯",
+    seasonTime: "4 月 · 夜晚",
+    arcadeLocationId: "usayu",
+    kyotoLocationId: "kyoto-nishikiyu",
+    characterIds: ["shiori", "tamako", "midori", "kanna", "dera"],
+    tags: ["钱汤", "友情", "うさ湯"],
+    summaryZh:
+      "跟着玉子她们来到钱汤「うさ湯」，史织从一开始拘谨不自在，到在蒸汽氤氲的浴池里和大家自然笑出声——街坊的热情彻底拉近了四位少女的距离，当然偷看的德拉也免不了挨了一记制裁。",
+    quoteJa: "みんなと一緒だと、なんだか温かいね。",
+    quoteZh: "「和大家在一起，感觉身体和心里都暖呼呼的呢。」",
+    staffNoteZh:
+      "官网地图「still/05 はじめての銭湯」直接对应本回钱汤重要戏份。",
+    pilgrimageTipZh: "可在京都实景中对照中京区「旧·锦汤」感受传统町家钱汤外观。",
+    tone: "mint",
+    icon: "mochi",
+  },
+
+  // =========================================================================
+  // TV 第 4 话：小小的恋情，绽放了
+  // =========================================================================
+  {
+    id: "ev-04-shrine-festival",
+    episodeId: "ep04",
+    order: 12,
+    titleZh: "五月祭典筹备：神社林荫下的期待与心事",
+    titleJa: "うさぎ山神社のお祭りとあんこの恋",
+    sceneBadge: "第 4 话 · 神社参道",
+    seasonTime: "5 月 · 初夏白昼",
+    kyotoLocationId: "kyoto-shimogamo",
+    characterIds: ["anko", "tamako", "mamedai", "dera"],
+    tags: ["祭典", "馅子", "下鸭神社"],
+    summaryZh:
+      "五月兔山神社即将举办盛大祭典，商店街众人干劲十足，唯独小学四年级的妹妹馅子闷闷不乐——她暗自期待同班男生柚月能来参加祭典，还努力攒起街坊给的小零花钱。",
+    quoteJa: "あんこって呼ばないで、あんって呼んでよ！",
+    quoteZh: "「别叫我馅子啦，要叫我小馅！」",
+    staffNoteZh:
+      "林荫参道与初夏新绿氛围大量呼应鸭川北端下鸭神社与糺之森。",
+    tone: "leaf",
+    icon: "flower",
+  },
+  {
+    id: "ev-04-tokiwado-gift",
+    episodeId: "ep04",
+    order: 13,
+    titleZh: "放学街巷：给柚月选一份小小礼物",
+    titleJa: "トキワ堂で選ぶ小さなプレゼント",
+    sceneBadge: "第 4 话 · トキワ堂",
+    seasonTime: "5 月 · 午后",
+    arcadeLocationId: "tokiwado",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["anko", "midori", "tamako"],
+    tags: ["馅子", "トキワ堂", "成长"],
+    summaryZh:
+      "怀着初恋悸动的馅子在商店街兜兜转转，即便最后未能如愿向柚月送出心意，小绿和姐姐玉子在温柔夜色下的安慰让年幼的她第一次明白「没关系，新的花朵还会盛开」。",
+    quoteJa: "思い通りに行かずとも、別の道は別の花。",
+    quoteZh: "「纵使未能如愿以偿，另一条小径上依然有别的花朵在绽放。」",
+    staffNoteZh:
+      "小绿家开的「トキワ堂」和周边店铺一起构成孩子们从幼年长大的温暖庇护所。",
+    tone: "leaf",
+    icon: "mochi",
+  },
+  {
+    id: "ev-04-kamogawa-night",
+    episodeId: "ep04",
+    order: 14,
+    titleZh: "贺茂大桥夜风：一家人肩并肩的回家路",
+    titleJa: "賀茂大橋の夜風と北白川家",
+    sceneBadge: "第 4 话 · 贺茂大桥",
+    seasonTime: "5 月 · 祭典夜晚",
+    kyotoLocationId: "kyoto-kamo-ohashi",
+    characterIds: ["anko", "tamako", "mamedai", "fuku"],
+    tags: ["夜景", "亲情", "贺茂大桥"],
+    summaryZh:
+      "祭典散场后，豆大牵起失落的馅子走过鸭川夜风吹拂的大桥，金鱼灯与家人略显笨拙却无比真诚的体贴，为这段短暂又酸甜的初恋画下温柔句点。",
+    quoteJa: "ほら、帰るぞ、あんこ。",
+    quoteZh: "「好啦，回家吧，馅子。」",
+    staffNoteZh:
+      "以贺茂大桥俯瞰夜间川面的宁静对比白天祭典喧嚣，极具山田尚子式的节奏感。",
+    tone: "navy",
+    icon: "flower",
+  },
+
+  // =========================================================================
+  // TV 第 5 话：共度了一整晚哦
+  // =========================================================================
+  {
+    id: "ev-05-school-pool",
+    episodeId: "ep05",
+    order: 15,
+    titleZh: "旱鸭子特训！兔山高校夏日泳池",
+    titleJa: "プールで特訓！泳げないたまこ",
+    sceneBadge: "第 5 话 · 兔山高校",
+    seasonTime: "7 月 · 期末临近",
+    kyotoLocationId: "kyoto-seibo",
+    characterIds: ["tamako", "midori", "kanna", "shiori"],
+    tags: ["泳池", "校园", "友情"],
+    summaryZh:
+      "临海学校前夕，不会游泳的玉子在高校泳池跟着小绿、史织和神奈加紧特训。水花四溅与少女们的笑声让蝉鸣盛夏闪烁着澄澈青春光芒。",
+    quoteJa: "たまこ、力抜いて！私が支えてるから。",
+    quoteZh: "「玉子，放轻松！我一直扶着你呢。」",
+    staffNoteZh:
+      "这段泳池练习也悄然展现了绿对玉子全心全意的关心与保护欲。",
+    tone: "sky",
+    icon: "baton",
+  },
+  {
+    id: "ev-05-fireworks-confession",
+    episodeId: "ep05",
+    order: 16,
+    titleZh: "夏夜烟火下的未竟告白：饼藏的真夏夜之梦",
+    titleJa: "花火の下、言い出せなかった想い",
+    sceneBadge: "第 5 话 · 临海夏夜",
+    seasonTime: "7 月 · 临海学校夜",
+    arcadeLocationId: "tamaya-window",
+    kyotoLocationId: "kyoto-fujinomori",
+    characterIds: ["mochizou", "tamako", "dera", "midori"],
+    tags: ["饼藏", "烟火", "告白未遂"],
+    summaryZh:
+      "临海学校的盛夏夜晚，德拉强势撮合饼藏独自约出玉子，可就在烟花绽放夜空的瞬间，紧握相机的饼藏终究被错位的节奏和烟火声掩去告白，只留下一段让人心焦又可爱的青涩夏夜记忆。",
+    quoteJa: "あのさ、たまこ……俺、ずっと前から……！",
+    quoteZh: "「那个……玉子，其实我从很久以前就……！」",
+    staffNoteZh:
+      "从通学电车驶向海边，也埋下了直到剧场版才真正跨出那一步的漫长伏笔。",
+    tone: "sky",
+    icon: "camera",
+  },
+
+  // =========================================================================
+  // TV 第 6 话：我的脊背也发凉了呀
+  // =========================================================================
+  {
+    id: "ev-06-ghost-plan",
+    episodeId: "ep06",
+    order: 17,
+    titleZh: "盛夏消暑新点子：兔山商店街恐怖鬼屋",
+    titleJa: "真夏の商店街お化け屋敷計画",
+    sceneBadge: "第 6 话 · 十字路口",
+    seasonTime: "8 月 · 盛夏酷暑",
+    arcadeLocationId: "arcade-crossroads",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["tamako", "kanna", "midori", "shiori", "shimizuya_tomio"],
+    tags: ["鬼屋", "夏日", "商店街"],
+    summaryZh:
+      "八月酷暑让街上冷清许多，玉子提议全街联动举办「兔山商店街纳凉鬼屋」。大家纷纷出谋划策准备布景和吓人机关，结果空置商铺里似乎真有什么灵异事件悄然发生……",
+    quoteJa: "背筋がゾクッとするほど涼しくなっちゃうかも！",
+    quoteZh: "「说不定会让大家的背脊都发凉凉爽起来呢！」",
+    staffNoteZh:
+      "高画质设定中专门绘出了玉子、绿、神奈、史织四人的「鬼屋幽灵装束」（setting/10）。",
+    tone: "navy",
+    icon: "mochi",
+  },
+  {
+    id: "ev-06-usayu-spooky",
+    episodeId: "ep06",
+    order: 18,
+    titleZh: "夏夜怪谈大爆发：钱汤外与空屋的惊悚之夜",
+    titleJa: "うさ湯界隈の怪奇現象！？",
+    sceneBadge: "第 6 话 · うさ湯旁",
+    seasonTime: "8 月 · 深夜",
+    arcadeLocationId: "usayu",
+    kyotoLocationId: "kyoto-nishikiyu",
+    characterIds: ["dera", "mochizou", "kanna", "tamako", "shiori"],
+    tags: ["怪谈", "搞笑", "神展开"],
+    summaryZh:
+      "夜风穿过寂静的拱廊与「うさ湯」北侧小巷，莫名飘浮的团扇、神秘黑影与德拉惊恐的尖叫把夏夜气氛推到顶点！虽然最后发现大多是乌龙与大家自己吓自己，欢呼声却重新点亮了整条夏夜商店街。",
+    quoteJa: "ぎゃあああ！背中がほんとに凍ったぜぇ！",
+    quoteZh: "「呀啊啊啊！本大爷的脊背这下真的冻僵啦！」",
+    staffNoteZh:
+      "荒诞幽默中带着京都街坊夜晚特有的静谧氛围，非常具有京都动画喜剧张力。",
+    tone: "navy",
+    icon: "bird",
+  },
+  {
+    id: "ev-06-udon-warmdown",
+    episodeId: "ep06",
+    order: 19,
+    titleZh: "鬼屋大成功：一碗暖呼呼的深夜慰劳",
+    titleJa: "お化け屋敷のあとのほっこり打ち上げ",
+    sceneBadge: "第 6 话 · みやこうどん",
+    seasonTime: "8 月 · 闭馆后",
+    arcadeLocationId: "miyako-udon",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["tamako", "shimizuya_tomio", "anko", "midori"],
+    tags: ["鬼屋庆功", "乌冬", "街坊"],
+    summaryZh:
+      "闹腾一整晚的鬼屋活动吸引大批客人满意而归。大伙聚在南端店面休息闲聊，笑称「一切顺利结束就好啦，今晚要彻底睡个好觉」。",
+    quoteJa: "すったもんだの大騒ぎ。終わりよければすべてよし。",
+    quoteZh: "「鸡飞狗跳大闹一场，结局圆满就一切完美！」",
+    staffNoteZh:
+      "收尾回到「みやこうどん」一带的日常人间烟火气，与鬼屋惊悚形成反差萌。",
+    tone: "apricot",
+    icon: "mochi",
+  },
+
+  // =========================================================================
+  // TV 第 7 话：那个女孩要嫁出去了
+  // =========================================================================
+  {
+    id: "ev-07-choi-arrives",
+    episodeId: "ep07",
+    order: 20,
+    titleZh: "鸟占官乔伊降临！玉屋居间的善意谎言",
+    titleJa: "チョイ登場！たまや居間の大ピンチ",
+    sceneBadge: "第 7 话 · 玉屋居间",
+    seasonTime: "9 月 · 初秋",
+    arcadeLocationId: "tamaya-shop",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["choi", "dera", "tamako", "anko", "mamedai"],
+    tags: ["乔伊", "玉屋居间", "南国来客"],
+    summaryZh:
+      "久等不到德拉音讯，南方王国派出认真率直的少女占卜官乔伊亲自追踪而来。面对气鼓鼓追问自己为何胖成圆球的乔伊，德拉实在没脸承认「年糕太好吃吃胖了」，慌乱扯出一连串哭笑不得的借口。",
+    quoteJa: "デラちゃん、太りすぎです！",
+    quoteZh: "「德拉酱，你胖得太过分了です！」",
+    staffNoteZh:
+      "第 7 话第 03 张官网剧照与居间设定图（setting/03）构图完全一致，是研究玉子家陈设的关键画面。",
+    tone: "apricot",
+    icon: "bird",
+  },
+  {
+    id: "ev-07-shimizuya-tofu",
+    episodeId: "ep07",
+    order: 21,
+    titleZh: "「正因为方方正正，才是豆腐呀」",
+    titleJa: "四角いからこそ豆腐だよ",
+    sceneBadge: "第 7 话 · 清水屋",
+    seasonTime: "9 月 · 午后买菜",
+    arcadeLocationId: "shimizuya",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["choi", "tamako", "shimizuya_tomio"],
+    tags: ["清水屋", "豆腐", "金句"],
+    summaryZh:
+      "一直暗恋着钱汤「うさ湯」看板娘小百合的豆腐店老板清水富雄，在乔伊的占卜中得知小百合即将出嫁的消息。虽然悄悄失恋，他依然笑着切下水豆腐宽慰身旁的众人——无论人聚人散，珍贵的守护心意仍像豆腐一样方正而温和。",
+    quoteJa: "あの娘がお嫁に行こうとも、やっぱり豆腐は四角くて。",
+    quoteZh: "「就算那个女孩出嫁了，豆腐依然还是方方正正的呀。」",
+    staffNoteZh:
+      "第 7 话的标题与台词双关，把清水老板失恋后的洒脱温柔与街坊喜悦拍得温厚无比。",
+    tone: "leaf",
+    icon: "mochi",
+  },
+  {
+    id: "ev-07-usayu-wedding",
+    episodeId: "ep07",
+    order: 22,
+    titleZh: "「うさ湯」小百合的幸福出嫁：商店街的温暖目送",
+    titleJa: "「うさ湯」さゆりさんの花嫁行列",
+    sceneBadge: "第 7 话 · 钱汤うさ湯",
+    seasonTime: "9 月 · 吉日",
+    arcadeLocationId: "usayu",
+    kyotoLocationId: "kyoto-nishikiyu",
+    characterIds: ["tamako", "choi", "shimizuya_tomio", "mamedai", "gohei"],
+    tags: ["うさ湯", "小百合", "婚礼祝福"],
+    summaryZh:
+      "钱汤「うさ湯」汤本长治的女儿小百合披上白无垢出嫁，豆大带着亲手做的红白喜庆年糕登门祝贺，商店街左右邻里列队鼓掌欢送，连暗恋她的富雄也真诚含笑祝福，让远道而来的乔伊初次见识到这条街绵长深厚的情谊。",
+    quoteJa: "お幸せに！商店街のみんながついてるからね！",
+    quoteZh: "「一定要幸福哦！商店街的大家永远都在背后支持你！」",
+    staffNoteZh:
+      "以传统白无垢花嫁队列贯穿整条兔山商店街的人情往来，成为第 7 话最动人的一幕。",
+    pilgrimageTipZh: "在京都地图中也可对照「旧·锦汤」想象町家钱汤门口花嫁启程的画面。",
+    tone: "sakura",
+    icon: "flower",
+  },
+
+  // =========================================================================
+  // TV 第 8 话：绝不准说我是鸡
+  // =========================================================================
+  {
+    id: "ev-08-nestbox",
+    episodeId: "ep08",
+    order: 23,
+    titleZh: "量身失败的精致鸟巢箱：神奈的木工杰作",
+    titleJa: "かんな特製の巣箱に入らない！",
+    sceneBadge: "第 8 话 · トキワ堂前",
+    seasonTime: "10 月 · 秋天",
+    arcadeLocationId: "tokiwado",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["kanna", "dera", "tamako", "choi", "midori"],
+    tags: ["牧野神奈", "木工", "搞笑"],
+    summaryZh:
+      "神奈认认真真用木头给德拉钉了一座精美绝伦的鸟巢箱，可圆滚滚如大福的德拉怎么挤也卡在洞口外！为了挽回皇室御用鸟的尊严，一场惨无人道的减肥计划正式启动。",
+    quoteJa: "紳士、設計寸法どおりなのに、なぜ入れないんです？",
+    quoteZh: "「绅士，明明是严格按尺寸做的，怎么钻不进去呢？」",
+    staffNoteZh:
+      "神奈严谨的木工量尺与德拉圆滚体型的反差贡献了全剧最经典的名笑料之一。",
+    tone: "leaf",
+    icon: "bird",
+  },
+  {
+    id: "ev-08-diet-arcade",
+    episodeId: "ep08",
+    order: 24,
+    titleZh: "绝不准说我是鸡！全商店街的魔鬼减肥跑道",
+    titleJa: "商店街ぐるみのダイエット大作戦",
+    sceneBadge: "第 8 话 · 商店街跑道",
+    seasonTime: "10 月 · 秋高气爽",
+    arcadeLocationId: "arcade-crossroads",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["dera", "choi", "tamako", "mochizou", "shimizuya_tomio"],
+    tags: ["减肥", "德拉", "名台词"],
+    summaryZh:
+      "从「みやこうどん」一路冲到入口拱门，德拉被断绝豆大福、还要顶着红叶秋风绕着商店街疯狂折返跑——偏偏路边肉店炸鸡、豆腐与年糕香气轮番诱惑，德拉喊出了那句传世咆哮：「绝不准说我是鸡！」",
+    quoteJa: "ニワトリだとは言わせねぇっ！！",
+    quoteZh: "「绝不准叫我大公鸡——！！」",
+    staffNoteZh:
+      "长长直线拱廊恰好变成绝佳的「田径跑道」，每一家店铺都成了诱惑关卡。",
+    tone: "leaf",
+    icon: "bird",
+  },
+  {
+    id: "ev-08-fujinomori-autumn",
+    episodeId: "ep08",
+    order: 25,
+    titleZh: "秋叶与疏水风声：放学路上的并肩暖意",
+    titleJa: "紅葉の疎水道と変わらない日常",
+    sceneBadge: "第 8 话 · 疏水秋景",
+    seasonTime: "10 月 · 深秋傍晚",
+    kyotoLocationId: "kyoto-kitoro",
+    characterIds: ["tamako", "mochizou", "midori", "kanna", "shiori"],
+    tags: ["秋景", "通学路", "疏水"],
+    summaryZh:
+      "经过一番折腾好不容易瘦下来的德拉其实又在大家投喂下悄悄胖了回去；另一边，金黄红叶映照着伏见疏水与放学同行的少年少女们，日常又一次无比珍贵地向前滚动。",
+    quoteJa: "季節は巡って、人情ぬくいよ、ほっこりと。",
+    quoteZh: "「季节流转，空气愈发高远澄澈，人情也暖烘烘的。」",
+    staffNoteZh:
+      "对应藤森站与琵琶湖疏水沿线的秋季通学场景。",
+    tone: "apricot",
+    icon: "train",
+  },
+
+  // =========================================================================
+  // TV 第 9 话：唱起来吧，恋之歌
+  // =========================================================================
+  {
+    id: "ev-09-anko-farewell",
+    episodeId: "ep09",
+    order: 26,
+    titleZh: "桥畔告别：馅子奔跑送别转学的柚月",
+    titleJa: "ユズキくんとの別れ・出町橋",
+    sceneBadge: "第 9 话 · 出町桥畔",
+    seasonTime: "秋日 · 黄昏",
+    kyotoLocationId: "kyoto-demachi-bridge",
+    characterIds: ["anko", "tamako", "mochizou", "dera"],
+    tags: ["馅子", "离别", "勇气"],
+    summaryZh:
+      "得知好朋友柚月要转学搬走，馅子失落得说不出再见。听完姐姐和饼藏温柔又认真的建议后，馅子追到桥头与河岸大声挥手道别，留下了最清澈的成长印记。",
+    quoteJa: "行ってらっしゃい！ユズキくん、元気でね！",
+    quoteZh: "「一路顺风！柚月，要一直健健康康的哦！」",
+    staffNoteZh:
+      "饼藏与玉子在旁边默默守候馅子的片段，也悄悄映照出两人彼此之间温柔的默契。",
+    tone: "sakura",
+    icon: "flower",
+  },
+  {
+    id: "ev-09-star-clown-record",
+    episodeId: "ep09",
+    order: 27,
+    titleZh: "黑胶指针落下的瞬间：「星とピエロ」里的记忆旋律",
+    titleJa: "星とピエロ・お母さんの歌の手がかり",
+    sceneBadge: "第 9 话 · 星とピエロ",
+    seasonTime: "秋日 · 午后咖啡",
+    arcadeLocationId: "star-and-clown",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["tamako", "yaobi", "mochizou"],
+    tags: ["星与小丑", "黑胶", "妈妈的歌"],
+    summaryZh:
+      "玉子始终在咖啡店「星とピエロ」寻找童年时母亲常哼的那首神秘旋律。八百比老板微笑着擦亮唱片与旧照片，原来这首歌连接着一段跨越数十年的兔山商店街浪漫往事。",
+    quoteJa: "エブリバディ・ラブズ・サムバディ。誰かが誰かを好きになる。",
+    quoteZh: "「人人都爱着某个人，总有一天，谁都会坠入爱河。」",
+    staffNoteZh:
+      "「星とピエロ」正是剧场版与 TV 核心主题《KOI NO UTA》的灵魂见证地。",
+    tone: "navy",
+    icon: "music",
+  },
+  {
+    id: "ev-09-mamedai-koi-no-uta",
+    episodeId: "ep09",
+    order: 28,
+    titleZh: "《恋之歌》揭晓：豆大年轻时唱给雏子的情歌",
+    titleJa: "豆大が歌う「KOI NO UTA」",
+    sceneBadge: "第 9 话 · 玉屋店堂",
+    seasonTime: "秋日 · 夜晚熄灯后",
+    arcadeLocationId: "tamaya-shop",
+    kyotoLocationId: "kyoto-futaba",
+    characterIds: ["mamedai", "tamako", "anko", "yaobi"],
+    tags: ["恋之歌", "豆大与雏子", "催泪名场面"],
+    summaryZh:
+      "原来玉子以为「永远找不到原唱」的那首歌，根本不是流行名曲，而是当年腼腆的北白川豆大亲手写来向玉子母亲雏子告白、还被母亲有些走音却无比开心哼唱一辈子的定情曲——《KOI NO UTA》。",
+    quoteJa: "僕が君を見つけたように――",
+    quoteZh: "「就像我遇见了你那样——」",
+    staffNoteZh:
+      "剧场版原声碟特别收录了藤原启治演唱的豆大版《KOI NO UTA》与洲崎绫演唱的玉子版。",
+    tone: "sakura",
+    icon: "music",
+  },
+
+  // =========================================================================
+  // TV 第 10 话：那个女孩的接力棒绽放花朵
+  // =========================================================================
+  {
+    id: "ev-10-midori-struggle",
+    episodeId: "ep10",
+    order: 29,
+    titleZh: "托付舞棒的烦恼：文化祭前夕的「トキワ堂」",
+    titleJa: "バトン部ステージの振り付けと悩み",
+    sceneBadge: "第 10 话 · トキワ堂",
+    seasonTime: "11 月 · 晚秋",
+    arcadeLocationId: "tokiwado",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["midori", "tamako", "kanna", "dera"],
+    tags: ["接力棒部", "常盘绿", "文化祭"],
+    summaryZh:
+      "抽中文化祭最黄金时段后，接力棒部部长绿肩负编舞重任却陷入瓶颈。祖父祖母与玉子毫无保留的信任令她重新想起拿起接力棒最初的快乐，也梳理清与青梅竹马之间的微妙心情。",
+    quoteJa: "みどりちゃんの作るバトン、きっと最高に素敵だよ！",
+    quoteZh: "「小绿编排的接力棒表演，一定会是最棒的！」",
+    staffNoteZh:
+      "「トキワ堂」不仅是玩具屋，更是小绿回到初心、获得勇气的心灵坐标。",
+    tone: "mint",
+    icon: "baton",
+  },
+  {
+    id: "ev-10-arcade-cheers",
+    episodeId: "ep10",
+    order: 30,
+    titleZh: "街坊应援团：把商店街的活力编进舞步里",
+    titleJa: "商店街のみんなからの応援",
+    sceneBadge: "第 10 话 · 商店街街头",
+    seasonTime: "11 月 · 排练归来",
+    arcadeLocationId: "arcade-crossroads",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["midori", "tamako", "kanna", "kaoru", "yaobi"],
+    tags: ["接力棒", "街坊应援", "青春"],
+    summaryZh:
+      "经过十字路口时，「星とピエロ」借出唱片、「フローリスト プリンセス」送上灵动节奏，街坊们的鼓掌与德拉像模像样的指挥瞬间点亮灵感——属于她们的旋律终于拼凑成型。",
+    quoteJa: "商店街の毎日そのものが、最高のリズムなんだ。",
+    quoteZh: "「原来商店街每一天的生活本身，就是最美妙的节拍啊。」",
+    staffNoteZh:
+      "完美衔接《玉子市场》对日常声响与音乐律动的敏锐表达。",
+    tone: "mint",
+    icon: "music",
+  },
+  {
+    id: "ev-10-festival-stage",
+    episodeId: "ep10",
+    order: 31,
+    titleZh: "晴空下的舞棒盛放：文化祭舞台大成功",
+    titleJa: "文化祭の晴れ舞台・バトンに花が咲く",
+    sceneBadge: "第 10 话 · 兔山高校",
+    seasonTime: "11 月 · 文化祭当天",
+    kyotoLocationId: "kyoto-seibo",
+    characterIds: ["midori", "tamako", "kanna", "shiori", "mochizou"],
+    tags: ["文化祭", "高光舞台", "接力棒部"],
+    summaryZh:
+      "大幕拉开，高抛旋转的接力棒划出银色弧线！玉子、绿、神奈踏着轻快鼓点绽放笑容，连带着观众席上紧握摄影机的饼藏与悄声加油的史织，整个兔山高校都陷入最明亮的青春瞬间。",
+    quoteJa: "空も心も揚々と、いざ幕開き、晴れ舞台！",
+    quoteZh: "「天空与心境一同飞扬，大幕拉开，迎向闪亮舞台！」",
+    staffNoteZh:
+      "这一话的舞棒旋转抛接动作，也为剧场版结尾「接住抛来的纸杯」埋下了动人的动作意象伏笔。",
+    tone: "mint",
+    icon: "baton",
+  },
+
+  // =========================================================================
+  // TV 第 11 话：难道那个女孩就是王妃
+  // =========================================================================
+  {
+    id: "ev-11-princess-news",
+    episodeId: "ep11",
+    order: 32,
+    titleZh: "王妃选定？！震撼兔山商店街的大宣言",
+    titleJa: "「あなたが王子のお妃様です」",
+    sceneBadge: "第 11 话 · 玉屋与街心",
+    seasonTime: "12 月初 · 冬季到来",
+    arcadeLocationId: "tamaya-shop",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["choi", "tamako", "dera", "mamedai", "shimizuya_tomio"],
+    tags: ["王妃悬念", "积分卡", "商店街"],
+    summaryZh:
+      "乔伊看到玉子脖颈上的印记，正式宣布「你就是我国王子寻找的王妃」！商店街众人大吃一惊开始幻想皇室亲家，唯独脱线的玉子满脑子只有「我还差几个印花就能集满商店街积分卡了呢」。",
+    quoteJa: "たまこさんが、王子のお妃様候補です！",
+    quoteZh: "「玉子小姐，你就是王子的王妃殿下人选です！」",
+    staffNoteZh:
+      "官方地图 setting/04 专门绘制了玉子珍藏的商店街积分卡（たまこのポイントカード）。",
+    tone: "sky",
+    icon: "mochi",
+  },
+  {
+    id: "ev-11-string-phone-night",
+    episodeId: "ep11",
+    order: 33,
+    titleZh: "二楼窗台的纸杯电话：关于改变与不变的夜话",
+    titleJa: "糸電話で話す、変わりたい・変わりたくない",
+    sceneBadge: "第 11 话 · 二楼窗台",
+    seasonTime: "12 月 · 雪夜",
+    arcadeLocationId: "tamaya-window",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["tamako", "mochizou"],
+    tags: ["纸杯电话", "玉子", "饼藏", "内心变化"],
+    summaryZh:
+      "站在窗口面对随时可能改变的未来，玉子拿起小时候的纸杯电话问对面的饼藏「你觉得我们会改变吗」。虽然话语还带着试探与茫然，两根丝线却紧紧连着两颗同步跳动的心。",
+    quoteJa: "変わりたくない、変わりたい。人の心は裏腹で。",
+    quoteZh: "「不想改变，又渴望成长。人的心意总是这么矛盾。」",
+    staffNoteZh:
+      "纸杯电话作为全系列最重要道具，在第 11 话承担了从日常迈向成长的主题转换。",
+    tone: "sky",
+    icon: "cup",
+  },
+
+  // =========================================================================
+  // TV 第 12 话：今年也即将走过岁末
+  // =========================================================================
+  {
+    id: "ev-12-prince-arrives",
+    episodeId: "ep12",
+    order: 34,
+    titleZh: "梅查王子驾临！全街破天荒临时歇业",
+    titleJa: "メチャ王子来訪と商店街の臨時休業",
+    sceneBadge: "第 12 话 · 大路屋与街口",
+    seasonTime: "12 月末 · 岁末",
+    arcadeLocationId: "oojiya",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["mecha", "tamako", "dera", "choi", "gohei"],
+    tags: ["梅查王子", "临时歇业", "岁末"],
+    summaryZh:
+      "亲切的梅查王子带着丢失的勋章踏进兔山商店街，整个商店街兴奋得张灯结彩、连店铺都几乎全员临时歇业迎接。可看着空荡又突然安静的店铺卷帘门，玉子忽然回忆起童年失母后的惶恐而陷入动摇。",
+    quoteJa: "どの店も閉まった商店街を見て、たまこは立ちすくむ。",
+    quoteZh: "「看到所有店铺都闭门歇业的商店街，玉子突然不安地愣住了。」",
+    staffNoteZh:
+      "本话巧妙解释了玉子为什么如此执着于维持商店街原本热闹不散的日常。",
+    tone: "sakura",
+    icon: "bird",
+  },
+  {
+    id: "ev-12-year-end-running",
+    episodeId: "ep12",
+    order: 35,
+    titleZh: "跑出拱廊迎向新年！永不落幕的兔山商店街",
+    titleJa: "年は変わっていくけれど、変わらぬものもある",
+    sceneBadge: "第 12 话 · 拱廊出口",
+    seasonTime: "12 月 31 日 · 跨年",
+    arcadeLocationId: "arcade-entrance",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["tamako", "mochizou", "midori", "dera", "mamedai"],
+    tags: ["TV大结局", "成长", "奔跑"],
+    summaryZh:
+      "听见大家呼唤自己的声音、想起爸爸的年糕香，玉子终于驱散心底不安，迎着朝阳跑向守护她的一切。德拉与乔伊、王子踏上归程，而「大路屋」闪亮挂出「RICE CAKE Oh!ZEE」新门牌，商店街又迎来喧闹的新一年！",
+    quoteJa: "年の瀬、お餅と人のぬくもりはずっとここにある。",
+    quoteZh: "「即使岁月流转，年糕的香气与人情的温暖也永远留在这里。」",
+    staffNoteZh:
+      "官网 map/still/04 展示了最终话之后焕然一新的「RICE CAKE Oh!ZEE」时髦门头。",
+    tone: "sakura",
+    icon: "mochi",
+  },
+
+  // =========================================================================
+  // 剧场版《玉子爱情故事》（2014）完整核心弧线
+  // =========================================================================
+  {
+    id: "ev-m01-senior-year",
+    episodeId: "movie",
+    order: 36,
+    titleZh: "高三同班的春天：写下「继承玉屋」的志愿表",
+    titleJa: "高校3年生・初めて同じクラスになった春",
+    sceneBadge: "剧场版 · 高三教室",
+    seasonTime: "4 月 · 高三新学期",
+    kyotoLocationId: "kyoto-seibo",
+    characterIds: ["tamako", "mochizou", "midori", "kanna", "shiori"],
+    tags: ["剧场版", "升学志愿", "同班"],
+    summaryZh:
+      "升入高中最后一年，饼藏与玉子人生头一回分到同一个班级！同学们纷纷讨论远方大学，玉子却自然地写下「想留在商店街继承玉屋」。看着毫无察觉的玉子，下定决心去东京学电影的饼藏眼神多了一抹复杂与坚定。",
+    quoteJa: "卒業したら、東京の大学に行こうと思ってる。",
+    quoteZh: "「毕业之后，我打算去东京的大学读书。」",
+    staffNoteZh:
+      "剧场版全片剥离了会说话的鸟儿，以纯粹的京都高校日常拉开细腻的青春剧幕。",
+    tone: "sakura",
+    icon: "baton",
+  },
+  {
+    id: "ev-m02-fujinomori-canal",
+    episodeId: "movie",
+    order: 37,
+    titleZh: "疏水春风与相机取景框：饼藏的决定",
+    titleJa: "琵琶湖疏水沿い・もち蔵の決意",
+    sceneBadge: "剧场版 · 藤森通学路",
+    seasonTime: "春季 · 放学后",
+    kyotoLocationId: "kyoto-kitoro",
+    characterIds: ["mochizou", "tamako", "midori"],
+    tags: ["剧场版", "疏水", "摄影机"],
+    summaryZh:
+      "从京阪藤森站穿过キトロ桥与师团桥的疏水步道上，饼藏手中的摄影机镜头一次次对准前方无忧无虑走着的玉子背影。在绿略带洞察与试探的提醒下，饼藏决定不再做永远只隔着窗户等待的人。",
+    quoteJa: "今のままじゃ、ダメなんだ。",
+    quoteZh: "「一直保持现状的话，是不行的啊。」",
+    staffNoteZh:
+      "キトロ桥与师团桥之间的疏水沿岸步道在剧场版摄影机视点中多次出现。",
+    pilgrimageTipZh: "从京阪藤森站步行 2 分钟即可到达キトロ桥和师团桥沿岸。",
+    tone: "leaf",
+    icon: "camera",
+  },
+  {
+    id: "ev-m03-kamogawa-confession",
+    episodeId: "movie",
+    order: 38,
+    titleZh: "鸭川三角洲的直球告白：「我喜欢玉子！」",
+    titleJa: "鴨川デルタ飛び石での告白",
+    sceneBadge: "剧场版 · 鸭川跳石",
+    seasonTime: "春季 · 夕阳余晖",
+    kyotoLocationId: "kyoto-delta",
+    characterIds: ["mochizou", "tamako"],
+    tags: ["剧场版名场面", "鸭川跳石", "直球告白"],
+    summaryZh:
+      "傍晚的鸭川三角洲水面闪着金红碎光，饼藏叫住正打算踩着跳乌龟石过河的玉子。「我要去东京了……我喜欢玉子，一直都喜欢！」直白滚烫的一句话在河风里炸开，令毫无防备的玉子脑袋一片空白，慌乱得差点踩进水里落荒而逃。",
+    quoteJa: "俺、たまこのことが好きだ！",
+    quoteZh: "「我——最喜欢玉子了！」",
+    staffNoteZh:
+      "全片最重要转折点！鸭川跳石间的物理距离与波光成为日本动画史上公认的青春告白经典。",
+    pilgrimageTipZh: "出町柳站出站步行 2 分钟即至鸭川三角洲，踩跳石时请注意水岸湿滑。",
+    tone: "sky",
+    icon: "mochi",
+  },
+  {
+    id: "ev-m04-kawai-bridge-midori",
+    episodeId: "movie",
+    order: 39,
+    titleZh: "河合桥畔的不知所措与绿的一推",
+    titleJa: "河合橋・揺れる心とみどりの背中押し",
+    sceneBadge: "剧场版 · 河合桥与川畔",
+    seasonTime: "告白之后 · 黄昏",
+    kyotoLocationId: "kyoto-kawai-bridge",
+    characterIds: ["tamako", "midori", "kanna", "shiori"],
+    tags: ["剧场版", "常盘绿", "心理转折"],
+    summaryZh:
+      "第一次意识到「喜欢」为何物的玉子连平时最熟的年糕店和饼藏都不敢面对。在河合桥与高野川畔的轻柔暮色里，一直暗中照顾并也曾藏着私心的小绿，温柔而坚定地推了玉子一把——「快去吧，如果不追上去会后悔的」。",
+    quoteJa: "たまこ、行って。自分の気持ちに嘘つかないで。",
+    quoteZh: "「玉子，快去吧。不要再欺骗自己的心了。」",
+    staffNoteZh:
+      "高野川堤岸这一刻让绿的角色弧光达到圆满，温柔得令人落泪。",
+    tone: "mint",
+    icon: "baton",
+  },
+  {
+    id: "ev-m05-arcade-wakeup",
+    episodeId: "movie",
+    order: 40,
+    titleZh: "听见心跳的商店街：「星とピエロ」与《恋之歌》的启示",
+    titleJa: "星とピエロ・商店街で見つけた答え",
+    sceneBadge: "剧场版 · 商店街与咖啡馆",
+    seasonTime: "春末 · 启程之日清晨",
+    arcadeLocationId: "star-and-clown",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["tamako", "yaobi", "mamedai", "anko", "midori"],
+    tags: ["剧场版", "星与小丑", "醒悟"],
+    summaryZh:
+      "听见「星とピエロ」传来的音乐、想起爸爸豆大当年也靠那首《恋之歌》向妈妈直白表达过爱意，一直习惯被大家宠爱保护的玉子终于确认：饼藏对自己早已不是普通的「青梅竹马」。她攥紧纸杯电话冲出商店街！",
+    quoteJa: "お父さんみたいに、ちゃんと伝えないと……！",
+    quoteZh: "「就像爸爸当年那样，不亲口告诉他是不行的……！」",
+    staffNoteZh:
+      "「星とピエロ」的唱片与玉屋的年糕回忆，在剧场版里成为了跨越两代人的勇气接力。",
+    tone: "navy",
+    icon: "music",
+  },
+  {
+    id: "ev-m06-demachiyanagi-dash",
+    episodeId: "movie",
+    order: 41,
+    titleZh: "冲出兔山町：向着京阪出町柳站全速奔跑",
+    titleJa: "うさぎ山を飛び出して・出町柳駅へ",
+    sceneBadge: "剧场版 · 出町柳站",
+    seasonTime: "春季 · 正午",
+    kyotoLocationId: "kyoto-demachiyanagi",
+    characterIds: ["tamako", "anko", "midori"],
+    tags: ["剧场版", "奔跑", "出町柳"],
+    summaryZh:
+      "在绿与街坊的目送和接力提示下，玉子第一次带着如此迫切的个人心愿跨出熟悉的拱廊、冲过贺茂川、冲进京阪出町柳站跃上列车——那个害怕改变的女孩，终于为爱奔出了自己的一方天地。",
+    quoteJa: "もち蔵に、会わなきゃ！",
+    quoteZh: "「必须见到饼藏才行！」",
+    staffNoteZh:
+      "出町柳站正是连接出町桝形、鸭川与京都全市轨道交通的核心现实节点。",
+    tone: "leaf",
+    icon: "train",
+  },
+  {
+    id: "ev-m07-kyoto-station-climax",
+    episodeId: "movie",
+    order: 42,
+    titleZh: "JR 京都站新干线月台：纸杯电话里的「最喜欢你！」",
+    titleJa: "JR京都駅新幹線ホーム・糸電話の答え",
+    sceneBadge: "剧场版 · 终幕高潮",
+    seasonTime: "春季 · 列车发车前",
+    kyotoLocationId: "kyoto-station",
+    characterIds: ["tamako", "mochizou"],
+    tags: ["终幕高潮", "纸杯电话", "京都站", "名台词"],
+    summaryZh:
+      "在宛如庞大迷宫般的 JR 京都站里迷路急哭又奋力冲刺，玉子终于赶在列车关门前冲上新干线月台。气喘吁吁中，饼藏惊讶接住她丢出的纸杯电话——正如接住空中的接力棒般稳稳握紧。对着纸杯，玉子大声说出了全系列最动人的回应：「饼藏，最喜欢你了！……Dō zo（给你）！」",
+    quoteJa: "もち蔵、大好き！……ドーゾ！",
+    quoteZh: "「饼藏，我最喜欢你了！……请接收！」",
+    staffNoteZh:
+      "第 18 届日本文化厅媒体艺术祭动画部门新人奖获奖核心段落，由山田尚子以极致奔跑节奏与呼吸音效铸就。",
+    pilgrimageTipZh: "可在 JR 京都站中央口、自由通路与东海道新干线站台（需持入场券）追寻最后冲刺动线。",
+    tone: "sakura",
+    icon: "cup",
+  },
+
+  // =========================================================================
+  // 附映短片《南国之岛的德拉酱》
+  // =========================================================================
+  {
+    id: "ev-s01-southern-island",
+    episodeId: "short",
+    order: 43,
+    titleZh: "南国风中的思念：写给「たまや」与众人的微风",
+    titleJa: "南の島で思い出すうさぎ山のお餅",
+    sceneBadge: "南国短片 · 余韵",
+    seasonTime: "剧场版同场 · 南国暖阳",
+    arcadeLocationId: "tamaya-shop",
+    kyotoLocationId: "kyoto-masugata",
+    characterIds: ["dera", "choi", "mecha", "tamako"],
+    tags: ["南国之岛的德拉酱", "彩蛋", "回忆"],
+    summaryZh:
+      "功成身退返回南方岛屿的德拉，虽然重新过回热带阳光与王子相伴的生活，却还是经常对着远方云朵流口水回忆「たまや」软糯的豆大福、商店街吵吵闹闹的大叔们，以及那位叫人放心不下的年糕店少女。",
+    quoteJa: "たまこの餅、たまには恋しくなるもち……。",
+    quoteZh: "「玉子家的年糕，偶尔还是会令人怀念起来もち……」",
+    staffNoteZh:
+      "2014 年与《玉子爱情故事》同场上映的可爱短片，为剧场版的青春心动添上一勺软萌暖意。",
+    tone: "apricot",
+    icon: "bird",
+  },
+];
+
+export const STORY_EVENT_MAP: Record<string, StoryEvent> = Object.fromEntries(
+  STORY_EVENTS.map((ev) => [ev.id, ev])
+);

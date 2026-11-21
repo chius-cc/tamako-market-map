@@ -1,0 +1,479 @@
+/* ==========================================================================
+   Map Workbench: Dual-View Arcade SVG Map & Kyoto Pilgrimage Leaflet Map
+   ========================================================================== */
+
+.tamako-map-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.tamako-view-switch {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: var(--tamako-radius-pill);
+  background: var(--tamako-bg-custard);
+  border: 1.5px solid var(--tamako-frame-gold);
+  gap: 4px;
+}
+
+.tamako-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 6px 16px;
+  border: 0;
+  border-radius: var(--tamako-radius-pill);
+  background: transparent;
+  color: var(--tamako-ink-roast);
+  font-family: var(--tamako-font-display);
+  font-weight: 900;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s var(--tamako-ease);
+}
+
+.tamako-view-btn[aria-pressed='true'] {
+  background: var(--tamako-ink);
+  color: #ffffff;
+}
+
+.tamako-tour-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.tamako-map-workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 20px;
+  align-items: start;
+}
+
+.tamako-map-stage {
+  position: relative;
+  border-radius: 22px;
+  background: var(--tamako-bg-washi);
+  border: 1.5px solid var(--tamako-frame-gold);
+  overflow: hidden;
+  min-height: 540px;
+}
+
+.tamako-map-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(255, 244, 247, 0.92);
+  border-bottom: 1px dotted var(--tamako-rule-stitch);
+  position: relative;
+  z-index: 40;
+}
+
+.tamako-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--tamako-ink-roast);
+}
+
+.tamako-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.tamako-legend-swatch {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 0 0 1px var(--tamako-rule-craft);
+}
+
+.tamako-zoom-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tamako-zoom-btn {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: var(--tamako-radius-pill);
+  border: 1.5px solid var(--tamako-rule-petal);
+  background: var(--tamako-surface);
+  color: var(--tamako-ink);
+  font-weight: 900;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.tamako-zoom-btn:hover {
+  background: var(--tamako-bg-blush);
+  border-color: var(--tamako-sakura);
+}
+
+/* ==========================================================================
+   兔山商店街 SVG 手绘平面图舞台
+   ========================================================================== */
+.tamako-arcade-viewport {
+  position: relative;
+  width: 100%;
+  height: 740px;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  background-color: var(--tamako-bg-washi);
+  background-image: radial-gradient(
+    rgba(216, 189, 163, 0.35) 1.2px,
+    transparent 1.2px
+  );
+  background-size: 14px 14px;
+}
+
+.tamako-arcade-viewport:active {
+  cursor: grabbing;
+}
+
+.tamako-arcade-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 820px;
+  height: 1040px;
+  transform-origin: 0 0;
+}
+
+.tamako-arcade-svg {
+  display: block;
+  width: 820px;
+  height: 1040px;
+  pointer-events: none;
+}
+
+.tamako-arcade-hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(142, 76, 40, 0.22);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition:
+    transform 0.2s var(--tamako-ease),
+    box-shadow 0.2s ease-out,
+    opacity 0.2s ease-out;
+}
+
+.tamako-arcade-hotspot:hover,
+.tamako-arcade-hotspot:focus-visible {
+  transform: translate(-50%, -50%) scale(1.12);
+  z-index: 35;
+}
+
+.tamako-arcade-hotspot.is-selected {
+  transform: translate(-50%, -50%) scale(1.16);
+  box-shadow:
+    0 0 0 4px var(--tamako-sakura),
+    0 6px 18px rgba(153, 51, 56, 0.28);
+  z-index: 38;
+}
+
+.tamako-arcade-hotspot.is-dimmed {
+  opacity: 0.42;
+}
+
+.tamako-hotspot-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border-radius: 9999px;
+  background: var(--tamako-ink);
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  font-size: 0.72rem;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 色彩主题化热点圆章 */
+.tamako-pin--sakura {
+  background: var(--tamako-link);
+  color: #ffffff;
+}
+.tamako-pin--apricot {
+  background: var(--tamako-apricot);
+  color: var(--tamako-apricot-ink);
+}
+.tamako-pin--mint {
+  background: var(--tamako-mint);
+  color: var(--tamako-mint-ink);
+}
+.tamako-pin--sky {
+  background: var(--tamako-sky);
+  color: var(--tamako-sky-ink);
+}
+.tamako-pin--leaf {
+  background: var(--tamako-leaf);
+  color: var(--tamako-leaf-ink);
+}
+.tamako-pin--navy {
+  background: var(--tamako-demachi-navy);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   京都实景 Leaflet 巡礼地图
+   ========================================================================== */
+.tamako-kyoto-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--tamako-bg-custard);
+  border-bottom: 1px dotted var(--tamako-rule-stitch);
+  position: relative;
+  z-index: 40;
+}
+
+.tamako-kyoto-wrap {
+  position: relative;
+  width: 100%;
+  height: 560px;
+  background: var(--tamako-bg-washi);
+}
+
+.tamako-kyoto-leaflet {
+  width: 100%;
+  height: 100%;
+}
+
+/* 暖和纸滤镜仅作用于瓦片图层，不影响自定义 Marker 对比度 */
+.tamako-kyoto-leaflet .leaflet-tile-pane {
+  filter: sepia(0.14) saturate(0.95) brightness(1.01);
+}
+
+/* 严格遵守 tamako-web Z-index 阶梯，压制 Leaflet 内建高 z-index */
+.tamako-kyoto-leaflet .leaflet-pane {
+  z-index: 10;
+}
+.tamako-kyoto-leaflet .leaflet-tile-pane {
+  z-index: 11;
+}
+.tamako-kyoto-leaflet .leaflet-overlay-pane {
+  z-index: 15;
+}
+.tamako-kyoto-leaflet .leaflet-marker-pane {
+  z-index: 20;
+}
+.tamako-kyoto-leaflet .leaflet-tooltip-pane {
+  z-index: 25;
+}
+.tamako-kyoto-leaflet .leaflet-popup-pane {
+  z-index: 28;
+}
+.tamako-kyoto-leaflet .leaflet-top,
+.tamako-kyoto-leaflet .leaflet-bottom {
+  z-index: 32;
+}
+
+.tamako-leaflet-div-icon {
+  background: transparent;
+  border: 0;
+}
+
+.tamako-kyoto-marker-btn {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(142, 76, 40, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.18s var(--tamako-ease);
+}
+
+.tamako-kyoto-marker-btn:hover,
+.tamako-kyoto-marker-btn:focus-visible {
+  transform: scale(1.12);
+}
+
+.tamako-kyoto-marker-btn.is-selected {
+  transform: scale(1.18);
+  box-shadow:
+    0 0 0 4px var(--tamako-sakura),
+    0 6px 18px rgba(153, 51, 56, 0.32);
+}
+
+.tamako-kyoto-marker-btn.is-dimmed {
+  opacity: 0.45;
+}
+
+.tamako-leaflet-tooltip {
+  background: #ffffff;
+  border: 1.5px solid var(--tamako-sakura);
+  border-radius: 10px;
+  color: var(--tamako-ink);
+  font-family: var(--tamako-font-body);
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  box-shadow: var(--tamako-shadow-soft);
+}
+
+/* ==========================================================================
+   地图右侧手账详情侧栏
+   ========================================================================== */
+.tamako-sidebar {
+  background: var(--tamako-bg-washi);
+  border: 1.5px solid var(--tamako-rule-petal);
+  border-radius: 22px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tamako-sidebar-loc-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tamako-sidebar-loc-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--tamako-ink);
+}
+
+.tamako-sidebar-loc-ja {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--tamako-ink-muted);
+}
+
+.tamako-sidebar-loc-desc {
+  margin: 0;
+  font-size: 0.86rem;
+  color: var(--tamako-ink-roast);
+  line-height: 1.65;
+}
+
+.tamako-sidebar-events {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 350px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.tamako-sidebar-event-item {
+  width: 100%;
+  text-align: left;
+  padding: 11px 12px;
+  border-radius: 14px;
+  border: 1.5px solid var(--tamako-frame-gold);
+  background: var(--tamako-surface);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.16s ease-out, background-color 0.16s ease-out;
+}
+
+.tamako-sidebar-event-item:hover {
+  border-color: var(--tamako-sakura);
+  background: var(--tamako-bg-blush);
+}
+
+.tamako-sidebar-event-item.is-active {
+  border-color: var(--tamako-link);
+  background: var(--tamako-bg-blush);
+}
+
+.tamako-sidebar-event-name {
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: var(--tamako-ink);
+  line-height: 1.4;
+}
+
+.tamako-sidebar-empty {
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--tamako-bg-custard);
+  border: 1px dashed var(--tamako-rule-stitch);
+  color: var(--tamako-ink-roast);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 960px) {
+  .tamako-map-workbench {
+    grid-template-columns: 1fr;
+  }
+
+  .tamako-arcade-viewport {
+    height: 680px;
+  }
+
+  .tamako-kyoto-wrap {
+    height: 440px;
+  }
+
+  .tamako-sidebar-events {
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tamako-arcade-viewport {
+    height: 420px;
+  }
+
+  .tamako-kyoto-wrap {
+    height: 380px;
+  }
+
+  .tamako-view-switch {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .tamako-view-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 6px 10px;
+    font-size: 0.84rem;
+  }
+}
