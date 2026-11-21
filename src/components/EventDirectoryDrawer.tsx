@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CHARACTER_MAP } from "../data/characters";
 import { EPISODE_MAP, EPISODES } from "../data/episodes";
 import { LOCATION_MAP } from "../data/locations";
@@ -16,22 +16,44 @@ const AREA_ORDER = [
   { id: "central", label: "JR 京都站与市中心片区" },
 ];
 
-export function EventDirectory({
+export function EventDirectoryDrawer({
+  open,
   events,
   activeView,
   onLocateEvent,
   onOpenModal,
   onResetFilters,
+  onClose,
 }: {
+  open: boolean;
   events: StoryEvent[];
   activeView: MapViewMode;
   onLocateEvent: (view: MapViewMode, locationId: string, eventId: string) => void;
   onOpenModal: (eventId: string) => void;
   onResetFilters: () => void;
+  onClose: () => void;
 }) {
   const [groupMode, setGroupMode] = useState<GroupMode>("episode");
+  const closeRef = useRef<HTMLButtonElement | null>(null);
 
-  const groups: { key: string; title: string; subtitle?: string; items: StoryEvent[] }[] = [];
+  useEffect(() => {
+    if (!open) return;
+    closeRef.current?.focus();
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  const groups: {
+    key: string;
+    title: string;
+    subtitle?: string;
+    items: StoryEvent[];
+  }[] = [];
 
   if (groupMode === "episode") {
     for (const ep of EPISODES) {
@@ -57,7 +79,9 @@ export function EventDirectory({
         if (area.id === "arcade") {
           return primaryLoc.area === "arcade";
         }
-        const kyotoLoc = e.kyotoLocationId ? LOCATION_MAP[e.kyotoLocationId] : undefined;
+        const kyotoLoc = e.kyotoLocationId
+          ? LOCATION_MAP[e.kyotoLocationId]
+          : undefined;
         return kyotoLoc?.area === area.id && !e.arcadeLocationId;
       });
       if (items.length > 0) {
@@ -71,24 +95,31 @@ export function EventDirectory({
   }
 
   return (
-    <section
-      id="event-directory"
-      className="tamako-island"
-      aria-label="剧情事件分组手账目录"
+    <div
+      className="tamako-drawer-backdrop"
+      role="presentation"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
-      <div className="tamako-island-inner">
-        <div className="tamako-directory-toolbar">
+      <div
+        className="tamako-drawer-panel tamako-drawer-panel--wide tamako-scrollbox"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tamako-directory-title"
+      >
+        <div className="tamako-drawer-head">
           <div>
-            <h2 className="tamako-section-title">
-              <FloretIcon size={20} />
-              <span>剧情事件手账索引</span>
+            <h2 id="tamako-directory-title" className="tamako-section-title">
+              <FloretIcon size={18} />
+              <span>剧照事件手账（共 {events.length} 幕）</span>
             </h2>
-            <p className="tamako-prose" style={{ margin: "6px 0 0", fontSize: "0.9rem" }}>
-              无论是手机端浏览还是按章节顺读，都可以直接在这里检索并一键跳回对应地图坐标。
+            <p className="tamako-drawer-sub">
+              按时间线或圣地片区浏览动画剧照，点击「在地图定位」可直接飞往对应坐标。
             </p>
           </div>
 
-          <div className="tamako-chip-row" role="group" aria-label="列表分组方式">
+          <div className="tamako-chip-row">
             <button
               type="button"
               className="tamako-ep-chip"
@@ -105,6 +136,15 @@ export function EventDirectory({
             >
               按圣地片区
             </button>
+            <button
+              ref={closeRef}
+              type="button"
+              className="tamako-modal-close"
+              aria-label="关闭事件手账"
+              onClick={onClose}
+            >
+              ×
+            </button>
           </div>
         </div>
 
@@ -118,7 +158,7 @@ export function EventDirectory({
               className="tamako-pill-btn is-primary"
               onClick={onResetFilters}
             >
-              显示全部剧情事件
+              显示全部 43 幕事件
             </button>
           </div>
         ) : (
@@ -148,57 +188,59 @@ export function EventDirectory({
                   return (
                     <article key={ev.id} className="tamako-event-card">
                       <div>
-                        <div className="tamako-event-card-top">
+                        {/* Real 16:9 Anime Scene Still in Gold Mount */}
+                        <div className="tamako-photo-mount tamako-event-card-still">
+                          <img
+                            src={ev.stillUrl}
+                            alt={`${ev.titleZh} 剧照`}
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+
+                        <div className="tamako-event-card-top" style={{ marginTop: 10 }}>
                           <span className={`tamako-scene-tag tone-${ev.tone}`}>
-                            <SceneIcon kind={ev.icon} size={13} />
+                            <SceneIcon kind={ev.icon} size={12} />
                             <span>{ep?.shortLabel ?? ev.sceneBadge}</span>
                           </span>
-                          <span
-                            className="tamako-photo-mount"
-                            style={{
-                              display: "inline-flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              color: "var(--tamako-ink)",
-                            }}
-                            aria-hidden="true"
-                          >
-                            <SceneIcon kind={ev.icon} size={18} />
+                          <span style={{ fontSize: "0.75rem", color: "var(--tamako-ink-muted)", fontWeight: 700 }}>
+                            {ev.seasonTime}
                           </span>
                         </div>
 
-                        <h4 className="tamako-event-title" style={{ marginTop: 10 }}>
+                        <h4 className="tamako-event-title" style={{ marginTop: 8 }}>
                           {ev.titleZh}
                         </h4>
                         <p
                           style={{
-                            margin: "4px 0 8px",
+                            margin: "3px 0 7px",
                             fontSize: "0.78rem",
                             color: "var(--tamako-ink-muted)",
                             fontWeight: 700,
                           }}
                         >
-                          地点：{locName} · {ev.seasonTime}
+                          舞台：{locName}
                         </p>
                         <p className="tamako-event-summary">{ev.summaryZh}</p>
                       </div>
 
                       <div>
                         <div className="tamako-event-meta" style={{ marginBottom: 10 }}>
-                          {ev.characterIds.slice(0, 4).map((cid) => {
+                          {ev.characterIds.slice(0, 5).map((cid) => {
                             const ch = CHARACTER_MAP[cid];
                             if (!ch) return null;
                             return (
                               <span
                                 key={cid}
-                                className="tamako-char-mini"
+                                className="tamako-char-mini-with-avatar"
                                 style={{
                                   backgroundColor: ch.badgeBg,
                                   color: ch.badgeInk,
                                   border: `1px solid ${ch.badgeBorder}`,
                                 }}
                               >
-                                {ch.nameZh}
+                                <img src={ch.avatarUrl} alt="" />
+                                <span>{ch.nameZh}</span>
                               </span>
                             );
                           })}
@@ -212,12 +254,10 @@ export function EventDirectory({
                               style={{ minHeight: 34, padding: "4px 12px", fontSize: "0.8rem" }}
                               onClick={() => {
                                 onLocateEvent(pref.view, pref.locationId!, ev.id);
-                                document
-                                  .getElementById("map-stage")
-                                  ?.scrollIntoView({ behavior: "smooth" });
+                                onClose();
                               }}
                             >
-                              在地图定位
+                              📍 在地图定位
                             </button>
                           )}
                           <button
@@ -226,7 +266,7 @@ export function EventDirectory({
                             style={{ minHeight: 34, padding: "4px 12px", fontSize: "0.8rem" }}
                             onClick={() => onOpenModal(ev.id)}
                           >
-                            剧情详情
+                            剧照与台词
                           </button>
                         </div>
                       </div>
@@ -238,6 +278,6 @@ export function EventDirectory({
           ))
         )}
       </div>
-    </section>
+    </div>
   );
 }

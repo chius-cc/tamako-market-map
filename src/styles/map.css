@@ -1,40 +1,33 @@
 /* ==========================================================================
-   Map Workbench: Dual-View Arcade SVG Map & Kyoto Pilgrimage Leaflet Map
+   Map Stage, Custom MapLibre Kyoto Map, Arcade Map, Inspector & Dera Dock
    ========================================================================== */
-
-.tamako-map-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  margin-bottom: 18px;
-}
 
 .tamako-view-switch {
   display: inline-flex;
-  padding: 4px;
+  padding: 3px;
   border-radius: var(--tamako-radius-pill);
   background: var(--tamako-bg-custard);
   border: 1.5px solid var(--tamako-frame-gold);
-  gap: 4px;
+  gap: 3px;
 }
 
 .tamako-view-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  min-height: 40px;
-  padding: 6px 16px;
+  min-height: 36px;
+  padding: 4px 14px;
   border: 0;
   border-radius: var(--tamako-radius-pill);
   background: transparent;
   color: var(--tamako-ink-roast);
   font-family: var(--tamako-font-display);
   font-weight: 900;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.2s var(--tamako-ease);
+  white-space: nowrap;
+  transition: all 0.18s var(--tamako-ease);
 }
 
 .tamako-view-btn[aria-pressed='true'] {
@@ -42,106 +35,205 @@
   color: #ffffff;
 }
 
-.tamako-tour-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
+.tamako-view-btn[aria-pressed='true'] .tamako-ep-count {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
 }
 
-.tamako-map-workbench {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 20px;
-  align-items: start;
-}
-
-.tamako-map-stage {
+/* Full-Viewport Map Stage Container */
+.tamako-map-shell {
   position: relative;
-  border-radius: 22px;
-  background: var(--tamako-bg-washi);
-  border: 1.5px solid var(--tamako-frame-gold);
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
   overflow: hidden;
-  min-height: 540px;
+  background-color: var(--tamako-bg-washi);
 }
 
-.tamako-map-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 10px 14px;
-  background: rgba(255, 244, 247, 0.92);
-  border-bottom: 1px dotted var(--tamako-rule-stitch);
+.tamako-canvas-fill {
   position: relative;
-  z-index: 40;
+  width: 100%;
+  height: 100%;
 }
 
-.tamako-map-legend {
+.tamako-map-loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tamako-ink);
+  font-family: var(--tamako-font-display);
+  font-weight: 900;
+  font-size: 1rem;
+  background: var(--tamako-bg-washi);
+}
+
+/* Top-Left HUD Pills & Active Filter Strip */
+.tamako-map-hud-topcenter {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  z-index: 40;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--tamako-ink-roast);
+  gap: 6px;
+  max-width: calc(100% - 400px);
 }
 
-.tamako-legend-item {
+.tamako-hud-static-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 4px 12px;
+  border-radius: var(--tamako-radius-pill);
+  background: rgba(255, 253, 246, 0.94);
+  border: 1.5px solid var(--tamako-frame-gold);
+  box-shadow: var(--tamako-shadow-soft);
+  color: var(--tamako-ink-roast);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.tamako-hud-chip {
+  min-height: 34px;
+  padding: 4px 12px;
+  border-radius: var(--tamako-radius-pill);
+  border: 1.5px solid var(--tamako-frame-gold);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: var(--tamako-shadow-soft);
+  color: var(--tamako-ink);
+  font-size: 0.79rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.16s ease-out;
+}
+
+.tamako-hud-chip:hover {
+  background: var(--tamako-bg-blush);
+  border-color: var(--tamako-sakura);
+}
+
+.tamako-hud-chip.is-active {
+  background: var(--tamako-ink);
+  border-color: var(--tamako-ink);
+  color: #ffffff;
+}
+
+.tamako-hud-chip.is-mint.is-active {
+  background: var(--tamako-mint);
+  border-color: #20ad9a;
+  color: var(--tamako-mint-ink);
+}
+
+.tamako-active-filter-strip {
+  position: absolute;
+  top: 54px;
+  left: 14px;
+  z-index: 43;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  max-width: calc(100% - 400px);
+  padding: 6px 10px;
+  border-radius: 18px;
+  background: rgba(255, 244, 247, 0.96);
+  border: 1.5px solid var(--tamako-sakura);
+  box-shadow: var(--tamako-shadow-soft);
+}
+
+.tamako-active-chip {
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 1px solid var(--tamako-rule-petal);
+  color: var(--tamako-ink);
+  font-size: 0.76rem;
+  font-weight: 800;
 }
 
-.tamako-legend-swatch {
-  width: 11px;
-  height: 11px;
+.tamako-active-chip.is-avatar {
+  padding-left: 3px;
+}
+
+.tamako-active-chip img {
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  border: 1.5px solid #ffffff;
-  box-shadow: 0 0 0 1px var(--tamako-rule-craft);
+  object-fit: cover;
 }
 
-.tamako-zoom-controls {
-  display: inline-flex;
-  align-items: center;
+.tamako-active-chip button {
+  border: 0;
+  background: transparent;
+  color: var(--tamako-link);
+  font-weight: 900;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.tamako-active-clear {
+  border: 0;
+  background: transparent;
+  color: var(--tamako-link);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+/* Zoom Floating Action Buttons */
+.tamako-map-zoom-dock {
+  position: absolute;
+  left: 14px;
+  bottom: 188px;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
   gap: 6px;
 }
 
-.tamako-zoom-btn {
-  min-width: 34px;
-  height: 34px;
-  padding: 0 10px;
-  border-radius: var(--tamako-radius-pill);
-  border: 1.5px solid var(--tamako-rule-petal);
-  background: var(--tamako-surface);
+.tamako-zoom-fab {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--tamako-frame-gold);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--tamako-shadow-soft);
   color: var(--tamako-ink);
+  font-size: 1.1rem;
   font-weight: 900;
-  font-size: 0.82rem;
   cursor: pointer;
 }
 
-.tamako-zoom-btn:hover {
+.tamako-zoom-fab:hover {
   background: var(--tamako-bg-blush);
   border-color: var(--tamako-sakura);
 }
 
 /* ==========================================================================
-   兔山商店街 SVG 手绘平面图舞台
+   Usagiyama Arcade Illustrated Map Canvas & Photo Hotspots
    ========================================================================== */
 .tamako-arcade-viewport {
   position: relative;
   width: 100%;
-  height: 740px;
+  height: 100%;
   overflow: hidden;
   cursor: grab;
   touch-action: none;
   background-color: var(--tamako-bg-washi);
   background-image: radial-gradient(
-    rgba(216, 189, 163, 0.35) 1.2px,
-    transparent 1.2px
+    rgba(216, 189, 163, 0.36) 1.25px,
+    transparent 1.25px
   );
-  background-size: 14px 14px;
+  background-size: 15px 15px;
 }
 
 .tamako-arcade-viewport:active {
@@ -152,53 +244,62 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 820px;
-  height: 1040px;
   transform-origin: 0 0;
 }
 
 .tamako-arcade-svg {
   display: block;
-  width: 820px;
-  height: 1040px;
   pointer-events: none;
 }
 
-.tamako-arcade-hotspot {
+.tamako-arcade-pin {
   position: absolute;
   transform: translate(-50%, -50%);
-  width: 66px;
-  height: 66px;
+  width: 60px;
+  height: 60px;
+  padding: 3px;
   border-radius: 50%;
   border: 2.5px solid #ffffff;
-  box-shadow: 0 4px 12px rgba(142, 76, 40, 0.22);
+  box-shadow:
+    0 0 0 2px var(--tamako-frame-gold),
+    0 5px 14px rgba(142, 76, 40, 0.24);
+  background: #ffffff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 20;
+  z-index: 22;
   transition:
     transform 0.2s var(--tamako-ease),
     box-shadow 0.2s ease-out,
     opacity 0.2s ease-out;
 }
 
-.tamako-arcade-hotspot:hover,
-.tamako-arcade-hotspot:focus-visible {
-  transform: translate(-50%, -50%) scale(1.12);
+.tamako-arcade-pin-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.tamako-arcade-pin:hover,
+.tamako-arcade-pin:focus-visible {
+  transform: translate(-50%, -50%) scale(1.14);
   z-index: 35;
 }
 
-.tamako-arcade-hotspot.is-selected {
-  transform: translate(-50%, -50%) scale(1.16);
+.tamako-arcade-pin.is-selected {
+  transform: translate(-50%, -50%) scale(1.18);
   box-shadow:
     0 0 0 4px var(--tamako-sakura),
-    0 6px 18px rgba(153, 51, 56, 0.28);
+    0 8px 20px rgba(153, 51, 56, 0.32);
   z-index: 38;
 }
 
-.tamako-arcade-hotspot.is-dimmed {
-  opacity: 0.42;
+.tamako-arcade-pin.is-dimmed {
+  opacity: 0.38;
+  filter: grayscale(0.35);
 }
 
 .tamako-hotspot-badge {
@@ -219,261 +320,525 @@
   justify-content: center;
 }
 
-/* 色彩主题化热点圆章 */
 .tamako-pin--sakura {
-  background: var(--tamako-link);
-  color: #ffffff;
+  box-shadow:
+    0 0 0 2.5px #ff7b82,
+    0 5px 14px rgba(142, 76, 40, 0.22);
 }
 .tamako-pin--apricot {
-  background: var(--tamako-apricot);
-  color: var(--tamako-apricot-ink);
+  box-shadow:
+    0 0 0 2.5px #f69e6e,
+    0 5px 14px rgba(142, 76, 40, 0.22);
 }
 .tamako-pin--mint {
-  background: var(--tamako-mint);
-  color: var(--tamako-mint-ink);
+  box-shadow:
+    0 0 0 2.5px #31cbb7,
+    0 5px 14px rgba(142, 76, 40, 0.22);
 }
 .tamako-pin--sky {
-  background: var(--tamako-sky);
-  color: var(--tamako-sky-ink);
+  box-shadow:
+    0 0 0 2.5px #41a8dd,
+    0 5px 14px rgba(142, 76, 40, 0.22);
 }
 .tamako-pin--leaf {
-  background: var(--tamako-leaf);
-  color: var(--tamako-leaf-ink);
+  box-shadow:
+    0 0 0 2.5px #93d548,
+    0 5px 14px rgba(142, 76, 40, 0.22);
 }
 .tamako-pin--navy {
-  background: var(--tamako-demachi-navy);
-  color: #ffffff;
+  box-shadow:
+    0 0 0 2.5px #2e62a2,
+    0 5px 14px rgba(142, 76, 40, 0.22);
 }
 
 /* ==========================================================================
-   京都实景 Leaflet 巡礼地图
+   Custom Tamako-Styled Kyoto MapLibre Vector Map & Photo Pins
    ========================================================================== */
-.tamako-kyoto-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 10px 14px;
-  background: var(--tamako-bg-custard);
-  border-bottom: 1px dotted var(--tamako-rule-stitch);
-  position: relative;
-  z-index: 40;
-}
-
-.tamako-kyoto-wrap {
-  position: relative;
+.tamako-kyoto-maplibre,
+.tamako-kyoto-fallback {
   width: 100%;
-  height: 560px;
+  height: 100%;
   background: var(--tamako-bg-washi);
 }
 
-.tamako-kyoto-leaflet {
-  width: 100%;
-  height: 100%;
+.tamako-kyoto-maplibre .maplibregl-ctrl-attrib {
+  background: rgba(253, 255, 242, 0.9);
+  border-radius: 12px;
+  border: 1px solid var(--tamako-rule-craft);
+  color: var(--tamako-ink-muted);
+  font-size: 0.7rem;
 }
 
-/* 暖和纸滤镜仅作用于瓦片图层，不影响自定义 Marker 对比度 */
-.tamako-kyoto-leaflet .leaflet-tile-pane {
-  filter: sepia(0.14) saturate(0.95) brightness(1.01);
+@media (min-width: 961px) {
+  .tamako-kyoto-maplibre .maplibregl-ctrl-bottom-right {
+    right: 376px;
+    bottom: 6px;
+  }
 }
 
-/* 严格遵守 tamako-web Z-index 阶梯，压制 Leaflet 内建高 z-index */
-.tamako-kyoto-leaflet .leaflet-pane {
-  z-index: 10;
-}
-.tamako-kyoto-leaflet .leaflet-tile-pane {
-  z-index: 11;
-}
-.tamako-kyoto-leaflet .leaflet-overlay-pane {
-  z-index: 15;
-}
-.tamako-kyoto-leaflet .leaflet-marker-pane {
-  z-index: 20;
-}
-.tamako-kyoto-leaflet .leaflet-tooltip-pane {
-  z-index: 25;
-}
-.tamako-kyoto-leaflet .leaflet-popup-pane {
-  z-index: 28;
-}
-.tamako-kyoto-leaflet .leaflet-top,
-.tamako-kyoto-leaflet .leaflet-bottom {
-  z-index: 32;
+.tamako-kyoto-pin-wrap {
+  z-index: 22;
 }
 
-.tamako-leaflet-div-icon {
-  background: transparent;
-  border: 0;
-}
-
-.tamako-kyoto-marker-btn {
+.tamako-kyoto-pin {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
+  padding: 3px;
   border-radius: 50%;
   border: 2.5px solid #ffffff;
-  box-shadow: 0 4px 12px rgba(142, 76, 40, 0.25);
+  background: #ffffff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.18s var(--tamako-ease);
+  transition: transform 0.18s var(--tamako-ease), opacity 0.18s ease-out;
 }
 
-.tamako-kyoto-marker-btn:hover,
-.tamako-kyoto-marker-btn:focus-visible {
-  transform: scale(1.12);
+.tamako-kyoto-pin-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
 }
 
-.tamako-kyoto-marker-btn.is-selected {
-  transform: scale(1.18);
+.tamako-kyoto-pin-label {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1.5px solid var(--tamako-frame-gold);
+  box-shadow: 0 2px 8px rgba(142, 76, 40, 0.16);
+  color: var(--tamako-ink);
+  font-size: 0.72rem;
+  font-weight: 900;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.16s ease-out;
+}
+
+.tamako-kyoto-pin:hover,
+.tamako-kyoto-pin:focus-visible {
+  transform: scale(1.14);
+}
+
+.tamako-kyoto-pin:hover .tamako-kyoto-pin-label,
+.tamako-kyoto-pin:focus-visible .tamako-kyoto-pin-label,
+.tamako-kyoto-pin.is-selected .tamako-kyoto-pin-label {
+  opacity: 1;
+}
+
+.tamako-kyoto-pin.is-selected {
+  transform: scale(1.2);
   box-shadow:
     0 0 0 4px var(--tamako-sakura),
-    0 6px 18px rgba(153, 51, 56, 0.32);
+    0 8px 20px rgba(153, 51, 56, 0.34);
 }
 
-.tamako-kyoto-marker-btn.is-dimmed {
-  opacity: 0.45;
-}
-
-.tamako-leaflet-tooltip {
-  background: #ffffff;
-  border: 1.5px solid var(--tamako-sakura);
-  border-radius: 10px;
-  color: var(--tamako-ink);
-  font-family: var(--tamako-font-body);
-  font-weight: 700;
-  font-size: 0.8rem;
-  padding: 4px 10px;
-  box-shadow: var(--tamako-shadow-soft);
+.tamako-kyoto-pin.is-dimmed {
+  opacity: 0.42;
+  filter: grayscale(0.35);
 }
 
 /* ==========================================================================
-   地图右侧手账详情侧栏
+   Bottom-Left Dera Mascot & Story Tour Dock (z-index: 42)
    ========================================================================== */
-.tamako-sidebar {
-  background: var(--tamako-bg-washi);
-  border: 1.5px solid var(--tamako-rule-petal);
-  border-radius: 22px;
-  padding: 18px;
+.tamako-dera-dock {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  z-index: 42;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  align-items: flex-start;
+  gap: 8px;
+  max-width: min(420px, calc(100% - 396px));
+}
+
+.tamako-dera-bubble {
+  padding: 10px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 2px solid var(--tamako-petal);
+  box-shadow: var(--tamako-shadow-soft);
+  color: var(--tamako-ink);
+}
+
+.tamako-dera-bubble-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+  font-size: 0.76rem;
+  color: var(--tamako-link);
+}
+
+.tamako-dera-collapse {
+  border: 0;
+  background: var(--tamako-bg-blush);
+  color: var(--tamako-ink);
+  border-radius: 9999px;
+  padding: 1px 8px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.tamako-dera-bubble p {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.tamako-dera-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px 5px 6px;
+  border-radius: var(--tamako-radius-pill);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1.5px solid var(--tamako-frame-gold);
+  box-shadow: var(--tamako-shadow-soft);
+}
+
+.tamako-dera-avatar-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid var(--tamako-sakura);
+  background: var(--tamako-bg-blush);
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.tamako-dera-avatar-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ==========================================================================
+   Right Floating Location Inspector Card / Mobile Bottom Sheet (z-index: 46)
+   ========================================================================== */
+.tamako-inspector {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  bottom: 14px;
+  width: 356px;
+  z-index: 46;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(8px);
+  border-radius: 24px;
+  border: 2px solid var(--tamako-rule-petal);
+  box-shadow: var(--tamako-shadow-card);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tamako-inspector-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tamako-inspector-close {
+  min-height: 30px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  border: 1px solid var(--tamako-rule-petal);
+  background: var(--tamako-bg-blush);
+  color: var(--tamako-ink);
+  font-size: 0.76rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.tamako-inspector-hero {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  flex-shrink: 0;
 }
 
 .tamako-sidebar-loc-head {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .tamako-sidebar-loc-title {
   margin: 0;
-  font-size: 1.15rem;
+  font-family: var(--tamako-font-display);
+  font-size: 1.1rem;
   font-weight: 900;
   color: var(--tamako-ink);
 }
 
 .tamako-sidebar-loc-ja {
   margin: 0;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: var(--tamako-ink-muted);
 }
 
-.tamako-sidebar-loc-desc {
-  margin: 0;
-  font-size: 0.86rem;
-  color: var(--tamako-ink-roast);
-  line-height: 1.65;
-}
-
-.tamako-sidebar-events {
+.tamako-inspector-owners {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-height: 350px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-.tamako-sidebar-event-item {
-  width: 100%;
-  text-align: left;
-  padding: 11px 12px;
-  border-radius: 14px;
-  border: 1.5px solid var(--tamako-frame-gold);
-  background: var(--tamako-surface);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 6px;
-  transition: border-color 0.16s ease-out, background-color 0.16s ease-out;
 }
 
-.tamako-sidebar-event-item:hover {
+.tamako-owner-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 9px 2px 3px;
+  border-radius: 9999px;
+  border: 1px solid var(--tamako-frame-gold);
+  background: var(--tamako-bg-custard);
+  color: var(--tamako-ink-roast);
+  font-size: 0.74rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.tamako-owner-chip:hover {
   border-color: var(--tamako-sakura);
   background: var(--tamako-bg-blush);
 }
 
-.tamako-sidebar-event-item.is-active {
+.tamako-owner-chip img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.tamako-sidebar-loc-desc {
+  margin: 0;
+  font-size: 0.83rem;
+  color: var(--tamako-ink-roast);
+  line-height: 1.58;
+}
+
+.tamako-inspector-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tamako-inspector-events {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tamako-inspector-event-btn {
+  width: 100%;
+  text-align: left;
+  padding: 8px;
+  border-radius: 14px;
+  border: 1.5px solid var(--tamako-frame-gold);
+  background: var(--tamako-bg-ivory);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s ease-out, background-color 0.15s ease-out;
+}
+
+.tamako-inspector-event-btn:hover,
+.tamako-inspector-event-btn.is-active {
   border-color: var(--tamako-link);
   background: var(--tamako-bg-blush);
 }
 
-.tamako-sidebar-event-name {
-  font-size: 0.9rem;
+.tamako-inspector-ev-thumb {
+  width: 92px;
+  aspect-ratio: 16 / 9;
+  flex-shrink: 0;
+  padding: 3px;
+}
+
+.tamako-inspector-ev-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.tamako-inspector-ev-title {
+  font-size: 0.82rem;
   font-weight: 900;
   color: var(--tamako-ink);
-  line-height: 1.4;
+  line-height: 1.32;
+}
+
+.tamako-inspector-ev-avatars {
+  display: inline-flex;
+  align-items: center;
+}
+
+.tamako-inspector-ev-avatars img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #ffffff;
+  margin-left: -4px;
+}
+
+.tamako-inspector-ev-avatars img:first-child {
+  margin-left: 0;
+}
+
+.tamako-inspector-collapsed {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 46;
+}
+
+.tamako-inspector-reopen {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 14px 6px 7px;
+  border-radius: var(--tamako-radius-pill);
+  border: 2px solid var(--tamako-sakura);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--tamako-shadow-card);
+  color: var(--tamako-ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.tamako-inspector-reopen-thumb {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--tamako-frame-gold);
+}
+
+.tamako-inspector-reopen-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.tamako-inspector-reopen-text strong {
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+.tamako-inspector-reopen-text small {
+  font-size: 0.72rem;
+  color: var(--tamako-ink-muted);
 }
 
 .tamako-sidebar-empty {
-  padding: 14px;
+  padding: 12px;
   border-radius: 14px;
   background: var(--tamako-bg-custard);
   border: 1px dashed var(--tamako-rule-stitch);
   color: var(--tamako-ink-roast);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 
+/* ==========================================================================
+   Tablet & Mobile Map Stage Layout (<= 960px & <= 640px)
+   ========================================================================== */
 @media (max-width: 960px) {
-  .tamako-map-workbench {
-    grid-template-columns: 1fr;
+  .tamako-map-hud-topcenter {
+    left: 10px;
+    right: 10px;
+    max-width: none;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 2px;
   }
 
-  .tamako-arcade-viewport {
-    height: 680px;
+  .tamako-hud-static-tag {
+    display: none;
   }
 
-  .tamako-kyoto-wrap {
-    height: 440px;
+  .tamako-active-filter-strip {
+    left: 10px;
+    right: 10px;
+    max-width: none;
   }
 
-  .tamako-sidebar-events {
-    max-height: 300px;
+  .tamako-map-zoom-dock {
+    left: auto;
+    right: 10px;
+    bottom: 136px;
+  }
+
+  .tamako-dera-dock {
+    left: 10px;
+    right: 10px;
+    bottom: 66px;
+    max-width: none;
+  }
+
+  .tamako-dera-bar {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .tamako-inspector-collapsed {
+    top: auto;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+  }
+
+  .tamako-inspector-reopen {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .tamako-inspector {
+    top: auto;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    width: auto;
+    max-height: 62dvh;
+    z-index: 65;
+    border-radius: 20px;
   }
 }
 
-@media (max-width: 768px) {
-  .tamako-arcade-viewport {
-    height: 420px;
-  }
-
-  .tamako-kyoto-wrap {
-    height: 380px;
-  }
-
+@media (max-width: 640px) {
   .tamako-view-switch {
     width: 100%;
-    justify-content: stretch;
   }
 
   .tamako-view-btn {
     flex: 1;
-    justify-content: center;
-    padding: 6px 10px;
-    font-size: 0.84rem;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+
+  .tamako-dera-bar .tamako-pill-btn {
+    padding: 4px 9px;
+    font-size: 0.76rem;
   }
 }

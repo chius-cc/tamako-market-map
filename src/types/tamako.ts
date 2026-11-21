@@ -17,6 +17,7 @@ export interface Episode {
   titleJa: string;
   seasonLabel: string;
   releaseInfo: string;
+  stillUrl: string;
   staff: {
     script: string;
     storyboard: string;
@@ -44,6 +45,7 @@ export interface Character {
   circle: CharacterCircle;
   circleLabel: string;
   affiliation: string;
+  avatarUrl: string;
   tone: WagashiTone;
   badgeBg: string;
   badgeInk: string;
@@ -77,6 +79,8 @@ export interface Location {
   areaLabel: string;
   kind: LocationKind;
   tone: WagashiTone;
+  imageUrl: string;
+  ownerCharacterIds?: string[];
   arcadeCoord?: { x: number; y: number };
   arcadeLabelAlign?: "left" | "right" | "top" | "bottom";
   kyotoCoord?: { lat: number; lng: number };
@@ -109,6 +113,7 @@ export interface StoryEvent {
   titleJa: string;
   sceneBadge: string;
   seasonTime: string;
+  stillUrl: string;
   /** Primary arcade location ID if the scene occurs inside/around Usagiyama Arcade */
   arcadeLocationId?: string;
   /** Primary Kyoto real-world pilgrimage location ID */

@@ -10,6 +10,7 @@ export const EPISODES: Episode[] = [
     titleJa: "あの娘はかわいいもち屋の娘",
     seasonLabel: "12 月 · 年末除夕",
     releaseInfo: "TV 第 1 话（2013.01.09）",
+    stillUrl: "/images/stills/ev-01-deai.webp",
     staff: {
       script: "吉田玲子",
       storyboard: "山田尚子",
@@ -32,6 +33,7 @@ export const EPISODES: Episode[] = [
     titleJa: "恋の花咲くバレンタイン",
     seasonLabel: "2 月 · 情人节",
     releaseInfo: "TV 第 2 话（2013.01.16）",
+    stillUrl: "/images/stills/ev-02-midori-secret.webp",
     staff: {
       script: "吉田玲子",
       storyboard: "山田尚子",
@@ -54,6 +56,7 @@ export const EPISODES: Episode[] = [
     titleJa: "クールなあの子にあっちっち",
     seasonLabel: "4 月 · 樱花新学期",
     releaseInfo: "TV 第 3 话（2013.01.23）",
+    stillUrl: "/images/stills/ev-03-usayu-bath.webp",
     staff: {
       script: "吉田玲子",
       storyboard: "小川太一",
@@ -76,6 +79,7 @@ export const EPISODES: Episode[] = [
     titleJa: "小さな恋、咲いちゃった",
     seasonLabel: "5 月 · 初夏祭典",
     releaseInfo: "TV 第 4 话（2013.01.30）",
+    stillUrl: "/images/stills/ev-04-shrine-festival.webp",
     staff: {
       script: "花田十辉",
       storyboard: "北之原孝将",
@@ -98,6 +102,7 @@ export const EPISODES: Episode[] = [
     titleJa: "一夜を共に過ごしたぜ",
     seasonLabel: "7 月 · 仲夏临海学校",
     releaseInfo: "TV 第 5 话（2013.02.06）",
+    stillUrl: "/images/stills/ev-05-school-pool.webp",
     staff: {
       script: "花田十辉",
       storyboard: "太田里香",
@@ -120,6 +125,7 @@ export const EPISODES: Episode[] = [
     titleJa: "俺の背筋も凍ったぜ",
     seasonLabel: "8 月 · 盛夏鬼屋",
     releaseInfo: "TV 第 6 话（2013.02.13）",
+    stillUrl: "/images/stills/ev-06-ghost-plan.webp",
     staff: {
       script: "横手美智子",
       storyboard: "河浪荣作",
@@ -142,6 +148,7 @@ export const EPISODES: Episode[] = [
     titleJa: "あの子がお嫁に行っちゃった",
     seasonLabel: "初秋 · 占卜使者",
     releaseInfo: "TV 第 7 话（2013.02.20）",
+    stillUrl: "/images/stills/ev-07-choi-arrives.webp",
     staff: {
       script: "吉田玲子",
       storyboard: "内海纮子",
@@ -164,6 +171,7 @@ export const EPISODES: Episode[] = [
     titleJa: "ニワトリだとは言わせねぇ",
     seasonLabel: "深秋 · 减肥大作战",
     releaseInfo: "TV 第 8 话（2013.02.27）",
+    stillUrl: "/images/stills/ev-08-nestbox.webp",
     staff: {
       script: "横手美智子",
       storyboard: "武本康弘",
@@ -183,9 +191,10 @@ export const EPISODES: Episode[] = [
     sortOrder: 9,
     shortLabel: "第 9 话",
     titleZh: "唱起来吧，恋之歌",
-    titleJa: "歌っちゃうんだ、恋の歌",
+    titleJa: "歌っちゃうんだ、恋之歌",
     seasonLabel: "秋日 · 记忆旋律",
     releaseInfo: "TV 第 9 话（2013.03.06）",
+    stillUrl: "/images/stills/ev-09-mamedai-koi-no-uta.webp",
     staff: {
       script: "吉田玲子",
       storyboard: "三好一郎",
@@ -208,6 +217,7 @@ export const EPISODES: Episode[] = [
     titleJa: "あの子のバトンに花が咲く",
     seasonLabel: "晚秋 · 文化祭",
     releaseInfo: "TV 第 10 话（2013.03.13）",
+    stillUrl: "/images/stills/ev-10-festival-stage.webp",
     staff: {
       script: "横手美智子",
       storyboard: "小川太一",
@@ -230,6 +240,7 @@ export const EPISODES: Episode[] = [
     titleJa: "まさかあの娘がプリンセス",
     seasonLabel: "12 月初 · 风波再起",
     releaseInfo: "TV 第 11 话（2013.03.20）",
+    stillUrl: "/images/stills/ev-11-princess-news.webp",
     staff: {
       script: "吉田玲子",
       storyboard: "山田尚子",
@@ -252,6 +263,7 @@ export const EPISODES: Episode[] = [
     titleJa: "今年もまた暮れてった",
     seasonLabel: "12 月末 · 新年除夕",
     releaseInfo: "TV 最终话（2013.03.27）",
+    stillUrl: "/images/stills/ev-12-year-end-running.webp",
     staff: {
       script: "吉田玲子",
       storyboard: "石原立也・山田尚子",
@@ -274,6 +286,7 @@ export const EPISODES: Episode[] = [
     titleJa: "たまこラブストーリー",
     seasonLabel: "次年春 · 高三青春物语",
     releaseInfo: "剧场版长片（2014.04.26）",
+    stillUrl: "/images/stills/ev-m03-kamogawa-confession.webp",
     staff: {
       script: "吉田玲子",
       storyboard: "山田尚子",
@@ -296,6 +309,7 @@ export const EPISODES: Episode[] = [
     titleJa: "南の島のデラちゃん",
     seasonLabel: "同场附映短片",
     releaseInfo: "剧场版同场附映（2014.04.26）",
+    stillUrl: "/images/stills/ev-s01-southern-island.webp",
     staff: {
       script: "吉田玲子",
       storyboard: "石原立也",

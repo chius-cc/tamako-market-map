@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ARCADE_LOCATIONS } from "../data/locations";
 import { getLocationEvents } from "../lib/filter";
-import type { Location, StoryEvent } from "../types/tamako";
-import { SceneIcon } from "./Icons";
+import type { StoryEvent } from "../types/tamako";
 
-const CANVAS_W = 820;
-const CANVAS_H = 1040;
+const CANVAS_W = 940;
+const CANVAS_H = 1060;
 
-const SHOP_SIGNS: {
+interface ShopBlock {
   id: string;
   x: number;
   y: number;
@@ -15,114 +14,133 @@ const SHOP_SIGNS: {
   h: number;
   tag: string;
   name: string;
-  tagSide: "top" | "bottom";
+  roofA: string;
+  roofB: string;
+  wallBg: string;
+  borderColor: string;
   connectorFromX: number;
   connectorToX: number;
   connectorY: number;
-}[] = [
+  avatars: { src: string; cx: number; cy: number; ring: string }[];
+}
+
+const LEFT_SHOPS: ShopBlock[] = [
   {
     id: "sashimi",
-    x: 68,
-    y: 304,
-    w: 152,
-    h: 56,
+    x: 112,
+    y: 298,
+    w: 150,
+    h: 68,
     tag: "お魚屋さん",
     name: "さしみ",
-    tagSide: "top",
-    connectorFromX: 222,
-    connectorToX: 342,
+    roofA: "#41A8DD",
+    roofB: "#EAF7FF",
+    wallBg: "#FFFFFF",
+    borderColor: "#41A8DD",
+    connectorFromX: 262,
+    connectorToX: 356,
     connectorY: 332,
+    avatars: [
+      { src: "/images/avatars/sashimi_mari.webp", cx: 42, cy: 332, ring: "#F69E6E" },
+      { src: "/images/avatars/sashimi_takashi.webp", cx: 88, cy: 332, ring: "#41A8DD" },
+    ],
   },
   {
     id: "shimizuya",
-    x: 68,
-    y: 410,
-    w: 152,
-    h: 56,
+    x: 112,
+    y: 406,
+    w: 150,
+    h: 68,
     tag: "お豆腐屋さん",
     name: "清水屋",
-    tagSide: "top",
-    connectorFromX: 222,
-    connectorToX: 342,
-    connectorY: 438,
+    roofA: "#93D548",
+    roofB: "#F3FAEA",
+    wallBg: "#FFFFFF",
+    borderColor: "#88B17D",
+    connectorFromX: 262,
+    connectorToX: 356,
+    connectorY: 440,
+    avatars: [
+      { src: "/images/avatars/shimizuya_tomio.webp", cx: 74, cy: 440, ring: "#93D548" },
+    ],
   },
   {
     id: "florist-princess",
-    x: 52,
+    x: 102,
     y: 514,
-    w: 168,
-    h: 62,
+    w: 160,
+    h: 72,
     tag: "お花屋さん",
     name: "フローリスト\nプリンセス",
-    tagSide: "top",
-    connectorFromX: 222,
-    connectorToX: 342,
-    connectorY: 544,
+    roofA: "#FF7B82",
+    roofB: "#FFF4F7",
+    wallBg: "#FFFDF9",
+    borderColor: "#FF979D",
+    connectorFromX: 262,
+    connectorToX: 356,
+    connectorY: 550,
+    avatars: [
+      { src: "/images/avatars/kaoru.webp", cx: 66, cy: 550, ring: "#FF979D" },
+    ],
   },
   {
     id: "star-and-clown",
-    x: 60,
-    y: 622,
-    w: 160,
-    h: 56,
+    x: 108,
+    y: 624,
+    w: 154,
+    h: 68,
     tag: "レコード屋・喫茶",
     name: "星とピエロ",
-    tagSide: "bottom",
-    connectorFromX: 222,
-    connectorToX: 342,
-    connectorY: 650,
+    roofA: "#2E62A2",
+    roofB: "#EDF3FA",
+    wallBg: "#FFFFFF",
+    borderColor: "#2E62A2",
+    connectorFromX: 262,
+    connectorToX: 356,
+    connectorY: 658,
+    avatars: [
+      { src: "/images/avatars/yaobi.webp", cx: 70, cy: 658, ring: "#2E62A2" },
+    ],
   },
   {
     id: "tokiwado",
-    x: 68,
-    y: 784,
-    w: 152,
-    h: 56,
+    x: 112,
+    y: 788,
+    w: 150,
+    h: 68,
     tag: "おもちゃ屋さん",
     name: "トキワ堂",
-    tagSide: "top",
-    connectorFromX: 222,
-    connectorToX: 342,
-    connectorY: 812,
+    roofA: "#31CBB7",
+    roofB: "#E9FBF8",
+    wallBg: "#FFFFFF",
+    borderColor: "#31CBB7",
+    connectorFromX: 262,
+    connectorToX: 356,
+    connectorY: 822,
+    avatars: [
+      { src: "/images/avatars/tokiwa_nobuhiko.webp", cx: 74, cy: 822, ring: "#31CBB7" },
+    ],
   },
   {
     id: "miyako-udon",
-    x: 60,
-    y: 894,
-    w: 160,
-    h: 56,
+    x: 108,
+    y: 898,
+    w: 154,
+    h: 68,
     tag: "おうどん屋さん",
     name: "みやこうどん",
-    tagSide: "top",
-    connectorFromX: 222,
-    connectorToX: 342,
-    connectorY: 922,
+    roofA: "#DE9132",
+    roofB: "#FAF4E0",
+    wallBg: "#FFFFFF",
+    borderColor: "#DE9132",
+    connectorFromX: 262,
+    connectorToX: 356,
+    connectorY: 932,
+    avatars: [
+      { src: "/images/avatars/miyako_tadanao.webp", cx: 70, cy: 932, ring: "#DE9132" },
+    ],
   },
 ];
-
-function getDefaultIconForLocation(loc: Location) {
-  switch (loc.id) {
-    case "florist-princess":
-      return "flower" as const;
-    case "star-and-clown":
-      return "music" as const;
-    case "tamaya-window":
-      return "cup" as const;
-    case "usayu":
-    case "tamaya-shop":
-    case "oojiya":
-    case "shimizuya":
-    case "just-meat":
-    case "miyako-udon":
-      return "mochi" as const;
-    case "tokiwado":
-      return "baton" as const;
-    case "sashimi":
-      return "bird" as const;
-    default:
-      return "flower" as const;
-  }
-}
 
 export function ArcadeMap({
   events,
@@ -136,7 +154,7 @@ export function ArcadeMap({
   onHoverHint: (hint: string) => void;
 }) {
   const viewportRef = useRef<HTMLDivElement | null>(null);
-  const [transform, setTransform] = useState({ scale: 0.56, x: 100, y: 12 });
+  const [transform, setTransform] = useState({ scale: 0.68, x: 120, y: 16 });
   const dragRef = useRef<{
     active: boolean;
     startX: number;
@@ -150,14 +168,18 @@ export function ArcadeMap({
     if (!el) return;
     const rect = el.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) return;
-    const scale = Math.min(
-      (rect.width - 16) / CANVAS_W,
-      (rect.height - 16) / CANVAS_H,
-      0.86
-    );
-    const clamped = Math.max(0.24, scale);
-    const x = Math.round((rect.width - CANVAS_W * clamped) / 2);
-    const y = Math.max(8, Math.round((rect.height - CANVAS_H * clamped) / 2));
+
+    // Reserve gentle breathing room on desktop when inspector is on the right & Dera dock at bottom-left
+    const rightReserve = rect.width >= 960 ? 372 : 12;
+    const bottomReserve = rect.width >= 960 ? 116 : 124;
+    const topReserve = 52;
+    const availW = Math.max(240, rect.width - rightReserve - 24);
+    const availH = Math.max(240, rect.height - topReserve - bottomReserve);
+
+    const scale = Math.min(availW / CANVAS_W, availH / CANVAS_H, 0.92);
+    const clamped = Math.max(0.26, scale);
+    const x = Math.round((rect.width - rightReserve - CANVAS_W * clamped) / 2) + 8;
+    const y = Math.round(topReserve + (availH - CANVAS_H * clamped) / 2);
     setTransform({ scale: clamped, x, y });
   }, []);
 
@@ -170,14 +192,14 @@ export function ArcadeMap({
     return () => ro.disconnect();
   }, [fitMap]);
 
-  const zoomBy = (factor: number) => {
+  const zoomAt = useCallback((factor: number, clientX?: number, clientY?: number) => {
     const el = viewportRef.current;
     setTransform((prev) => {
-      const nextScale = Math.min(1.4, Math.max(0.24, prev.scale * factor));
+      const nextScale = Math.min(1.65, Math.max(0.28, prev.scale * factor));
       if (!el) return { ...prev, scale: nextScale };
       const rect = el.getBoundingClientRect();
-      const cx = rect.width / 2;
-      const cy = rect.height / 2;
+      const cx = clientX !== undefined ? clientX - rect.left : rect.width / 2;
+      const cy = clientY !== undefined ? clientY - rect.top : rect.height / 2;
       const ratio = nextScale / prev.scale;
       return {
         scale: nextScale,
@@ -185,74 +207,58 @@ export function ArcadeMap({
         y: Math.round(cy - (cy - prev.y) * ratio),
       };
     });
-  };
+  }, []);
+
+  // Native non-passive wheel listener for silky zoom around cursor
+  useEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? 1.1 : 0.91;
+      zoomAt(factor, e.clientX, e.clientY);
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [zoomAt]);
 
   return (
-    <div className="tamako-map-stage">
-      <div className="tamako-map-toolbar">
-        <div className="tamako-map-legend" aria-label="图例">
-          <span className="tamako-legend-item">
-            <span
-              className="tamako-legend-swatch"
-              style={{ backgroundColor: "var(--tamako-link)" }}
-            />
-            <span>玉屋 / 花店</span>
-          </span>
-          <span className="tamako-legend-item">
-            <span
-              className="tamako-legend-swatch"
-              style={{ backgroundColor: "var(--tamako-sky)" }}
-            />
-            <span>拱门 / 路口</span>
-          </span>
-          <span className="tamako-legend-item">
-            <span
-              className="tamako-legend-swatch"
-              style={{ backgroundColor: "var(--tamako-mint)" }}
-            />
-            <span>钱汤 / トキワ堂</span>
-          </span>
-          <span className="tamako-legend-item">
-            <span
-              className="tamako-legend-swatch"
-              style={{ backgroundColor: "var(--tamako-demachi-navy)" }}
-            />
-            <span>星とピエロ / 大路屋</span>
-          </span>
-        </div>
+    <div className="tamako-canvas-fill">
+      {/* Floating Legend & Reset Pill */}
+      <div className="tamako-map-hud-topcenter" aria-label="商店街地图导览">
+        <span className="tamako-hud-static-tag">
+          🍡 手绘兔山商店街 · 滚轮/双指缩放 · 点击剧照圆章查看剧情
+        </span>
+        <button type="button" className="tamako-hud-chip" onClick={fitMap}>
+          适应全街
+        </button>
+      </div>
 
-        <div className="tamako-zoom-controls">
-          <button
-            type="button"
-            className="tamako-zoom-btn"
-            aria-label="放大商店街地图"
-            onClick={() => zoomBy(1.2)}
-          >
-            ＋
-          </button>
-          <button
-            type="button"
-            className="tamako-zoom-btn"
-            aria-label="缩小商店街地图"
-            onClick={() => zoomBy(0.84)}
-          >
-            －
-          </button>
-          <button
-            type="button"
-            className="tamako-zoom-btn"
-            onClick={fitMap}
-          >
-            适应画面
-          </button>
-        </div>
+      {/* Zoom Controls */}
+      <div className="tamako-map-zoom-dock" role="group" aria-label="商店街缩放控制">
+        <button
+          type="button"
+          className="tamako-zoom-fab"
+          aria-label="放大商店街地图"
+          onClick={() => zoomAt(1.22)}
+        >
+          ＋
+        </button>
+        <button
+          type="button"
+          className="tamako-zoom-fab"
+          aria-label="缩小商店街地图"
+          onClick={() => zoomAt(0.82)}
+        >
+          －
+        </button>
       </div>
 
       <div
         ref={viewportRef}
         className="tamako-arcade-viewport"
         role="region"
-        aria-label="兔山商店街交互式平面地图"
+        aria-label="兔山商店街手绘风交互式平面地图"
         onPointerDown={(e) => {
           if ((e.target as HTMLElement).closest("button")) return;
           dragRef.current = {
@@ -284,227 +290,355 @@ export function ArcadeMap({
         <div
           className="tamako-arcade-canvas"
           style={{
+            width: `${CANVAS_W}px`,
+            height: `${CANVAS_H}px`,
             transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})`,
           }}
         >
-          {/* 基于官网 bg.png 忠实重绘的手账风兔山商店街矢量底图 */}
           <svg
             className="tamako-arcade-svg"
             viewBox={`0 0 ${CANVAS_W} ${CANVAS_H}`}
+            style={{ width: `${CANVAS_W}px`, height: `${CANVAS_H}px` }}
             aria-hidden="true"
           >
             <defs>
-              <linearGradient id="arcadeRoadGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#FFF7F4" />
-                <stop offset="100%" stopColor="#FAF4E0" />
-              </linearGradient>
+              {/* Warm arcade floor tile pattern */}
+              <pattern
+                id="arcadeFloorTiles"
+                width="28"
+                height="28"
+                patternUnits="userSpaceOnUse"
+              >
+                <rect width="28" height="28" fill="#FFFDF6" />
+                <path
+                  d="M 28 0 L 0 0 0 28"
+                  fill="none"
+                  stroke="#F2E4CE"
+                  strokeWidth="1.2"
+                />
+                <rect x="2" y="2" width="11" height="11" rx="2" fill="#FAF4E0" opacity="0.55" />
+                <rect x="15" y="15" width="11" height="11" rx="2" fill="#FFF4F7" opacity="0.45" />
+              </pattern>
+
+              {/* Three-color Tamako awning pattern */}
+              <pattern
+                id="tamakoAwningTop"
+                width="96"
+                height="24"
+                patternUnits="userSpaceOnUse"
+              >
+                <rect x="0" y="0" width="32" height="24" fill="#DBFDF6" />
+                <rect x="32" y="0" width="32" height="24" fill="#F9EDED" />
+                <rect x="64" y="0" width="32" height="24" fill="#F3FBD7" />
+              </pattern>
+
+              {/* Circular clip paths for official character avatar medallions */}
+              <clipPath id="clipR22">
+                <circle cx="0" cy="0" r="22" />
+              </clipPath>
+              <clipPath id="clipR24">
+                <circle cx="0" cy="0" r="24" />
+              </clipPath>
             </defs>
 
-            {/* 柔和和纸街块衬底 */}
+            {/* Hand-stitched Washi Map Board */}
             <rect
-              x="16"
-              y="16"
-              width={CANVAS_W - 32}
-              height={CANVAS_H - 32}
-              rx="28"
+              x="14"
+              y="14"
+              width={CANVAS_W - 28}
+              height={CANVAS_H - 28}
+              rx="34"
               fill="#FFFFFF"
-              fillOpacity="0.82"
-              stroke="#FFCDC6"
-              strokeWidth="2"
-            />
-
-            {/* 街巷浅暖路面填充 */}
-            <path
-              d="M40 198 H785 V256 H472 V676 H778 V764 H472 V986 H344 V764 H40 V676 H344 V256 H40 Z"
-              fill="url(#arcadeRoadGrad)"
+              fillOpacity="0.94"
+              stroke="#EDD18F"
+              strokeWidth="3"
             />
             <rect
-              x="568"
-              y="72"
-              width="74"
-              height="130"
-              rx="8"
-              fill="#FAF4E0"
+              x="24"
+              y="24"
+              width={CANVAS_W - 48}
+              height={CANVAS_H - 48}
+              rx="26"
+              fill="none"
+              stroke="#FFCDC6"
+              strokeWidth="1.6"
+              strokeDasharray="7 5"
             />
 
-            {/* 左上标题手账徽标：うさぎ山 商店街 まっぷ */}
-            <g transform="translate(46, 36)">
+            {/* Top 3-color Awning Scallop Valance */}
+            <g transform="translate(26, 26)">
               <rect
                 x="0"
                 y="0"
-                width="290"
-                height="118"
-                rx="22"
+                width={CANVAS_W - 52}
+                height="16"
+                rx="8"
+                fill="url(#tamakoAwningTop)"
+              />
+            </g>
+
+            {/* T-Shaped + Crossroad Arcade Tiled Walkway */}
+            <path
+              d="M44 196 H896 V256 H504 V686 H892 V772 H504 V1006 H356 V772 H44 V686 H356 V256 H44 Z"
+              fill="url(#arcadeFloorTiles)"
+            />
+            {/* Usayu bathhouse north lane */}
+            <rect
+              x="602"
+              y="70"
+              width="76"
+              height="130"
+              rx="10"
+              fill="url(#arcadeFloorTiles)"
+            />
+
+            {/* Festive Hanging Bunting Flags along the Arcade Ceiling */}
+            <g opacity="0.88">
+              <path
+                d="M362 310 Q430 326 498 310"
+                fill="none"
+                stroke="#D8BDA3"
+                strokeWidth="1.6"
+              />
+              <polygon points="382,314 392,316 387,328" fill="#FF979D" />
+              <polygon points="412,318 422,319 417,331" fill="#31CBB7" />
+              <polygon points="442,319 452,318 447,331" fill="#F69E6E" />
+              <polygon points="470,316 480,314 475,328" fill="#93D548" />
+
+              <path
+                d="M362 520 Q430 536 498 520"
+                fill="none"
+                stroke="#D8BDA3"
+                strokeWidth="1.6"
+              />
+              <polygon points="382,524 392,526 387,538" fill="#41A8DD" />
+              <polygon points="412,528 422,529 417,541" fill="#FF7B82" />
+              <polygon points="442,529 452,528 447,541" fill="#EDD18F" />
+              <polygon points="470,526 480,524 475,538" fill="#31CBB7" />
+            </g>
+
+            {/* Title Cartouche: うさぎ山 商店街 まっぷ (Top Left) */}
+            <g transform="translate(46, 50)">
+              <rect
+                x="0"
+                y="0"
+                width="318"
+                height="122"
+                rx="26"
                 fill="#FFF4F7"
                 stroke="#FF979D"
-                strokeWidth="2"
-                strokeDasharray="6 4"
+                strokeWidth="2.4"
+                strokeDasharray="7 4"
               />
-              {/* 兔耳朵装饰 */}
+              {/* Cute Twin Rabbit Mascot Badge */}
+              <circle cx="48" cy="48" r="26" fill="#FFFFFF" stroke="#FF7B82" strokeWidth="2" />
               <path
-                d="M28 16c-4-14 6-18 11-4M42 16c4-14 14-10 10 4"
-                fill="none"
+                d="M40 34c-3-11 4-14 8-3M50 34c3-11 11-8 8 3"
+                fill="#FFF4F7"
                 stroke="#FF7B82"
-                strokeWidth="3"
+                strokeWidth="2.4"
                 strokeLinecap="round"
               />
+              <circle cx="48" cy="50" r="13" fill="#FFF4F7" stroke="#FF7B82" strokeWidth="2" />
+              <circle cx="44" cy="49" r="2" fill="#993338" />
+              <circle cx="52" cy="49" r="2" fill="#993338" />
+              <circle cx="41" cy="53" r="2.5" fill="#FFB1B5" />
+              <circle cx="55" cy="53" r="2.5" fill="#FFB1B5" />
+
               <text
-                x="26"
-                y="50"
+                x="86"
+                y="48"
                 fill="#BF3B5E"
-                fontSize="26"
+                fontSize="27"
                 fontWeight="900"
                 fontFamily="var(--tamako-font-display)"
               >
                 うさぎ山
               </text>
               <text
-                x="26"
-                y="84"
+                x="86"
+                y="82"
                 fill="#993338"
-                fontSize="24"
+                fontSize="25"
                 fontWeight="900"
                 fontFamily="var(--tamako-font-display)"
               >
                 商店街
               </text>
-              {/* 右侧对话泡泡「まっぷ」 */}
+
+              {/* Speech bubble まっぷ */}
               <ellipse
-                cx="208"
+                cx="254"
                 cy="48"
-                rx="54"
-                ry="28"
+                rx="50"
+                ry="26"
                 fill="#FFFFFF"
                 stroke="#FF7B82"
-                strokeWidth="2.5"
+                strokeWidth="2.4"
               />
               <text
-                x="208"
+                x="254"
                 y="55"
                 textAnchor="middle"
                 fill="#BF3B5E"
-                fontSize="20"
+                fontSize="19"
                 fontWeight="900"
                 fontFamily="var(--tamako-font-display)"
               >
                 まっぷ
               </text>
-              <text
-                x="114"
-                y="102"
-                fill="#8A5A36"
-                fontSize="12.5"
-                fontWeight="700"
-              >
-                点击彩色圆章，探索商店街名场面
+
+              <text x="86" y="106" fill="#8A5A36" fontSize="12.5" fontWeight="700">
+                出町桝形原型 · 街坊头像与剧照全收录
               </text>
             </g>
 
-            {/* 北横街虚线边界与うさ湯分支 */}
+            {/* Warm Stitched Coral Road Borders (matching official bg.png) */}
             <g stroke="#E69A88" strokeWidth="3.2" strokeDasharray="10 7" fill="none">
-              {/* 上方横路上下边界 */}
-              <line x1="42" y1="198" x2="564" y2="198" />
-              <line x1="646" y1="198" x2="782" y2="198" />
-              <line x1="42" y1="256" x2="342" y2="256" />
-              <line x1="474" y1="256" x2="782" y2="256" />
+              <line x1="46" y1="196" x2="600" y2="196" />
+              <line x1="680" y1="196" x2="894" y2="196" />
+              <line x1="46" y1="256" x2="356" y2="256" />
+              <line x1="504" y1="256" x2="894" y2="256" />
 
-              {/* 主街南北虚线边界（上方段 & 下方段） */}
-              <line x1="342" y1="256" x2="342" y2="676" />
-              <line x1="474" y1="256" x2="474" y2="676" />
-              <line x1="342" y1="764" x2="342" y2="982" />
-              <line x1="474" y1="764" x2="474" y2="982" />
+              <line x1="356" y1="256" x2="356" y2="686" />
+              <line x1="504" y1="256" x2="504" y2="686" />
+              <line x1="356" y1="772" x2="356" y2="1004" />
+              <line x1="504" y1="772" x2="504" y2="1004" />
 
-              {/* 十字路口水平通道（左街 & 右东支路） */}
-              <line x1="42" y1="676" x2="342" y2="676" />
-              <line x1="42" y1="764" x2="342" y2="764" />
-              <line x1="474" y1="676" x2="778" y2="676" />
-              <line x1="474" y1="764" x2="778" y2="764" />
+              <line x1="46" y1="686" x2="356" y2="686" />
+              <line x1="46" y1="772" x2="356" y2="772" />
+              <line x1="504" y1="686" x2="892" y2="686" />
+              <line x1="504" y1="772" x2="892" y2="772" />
             </g>
 
-            {/* 距离波浪省略线（呼应原版 bg.png 省略记号） */}
+            {/* Official Distance Wavy Break Lines */}
             <g stroke="#E69A88" strokeWidth="2.5" fill="none">
-              <path d="M518 184q8 14 0 28t0 28q8 14 0 28" />
-              <path d="M530 184q8 14 0 28t0 28q8 14 0 28" />
-              <path d="M326 870q22-8 44 0t44 0t44 0t40 0" />
-              <path d="M326 882q22-8 44 0t44 0t44 0t40 0" />
+              <path d="M554 182q8 14 0 28t0 28q8 14 0 28" />
+              <path d="M566 182q8 14 0 28t0 28q8 14 0 28" />
+              <path d="M342 878q22-8 44 0t44 0t44 0t44 0" />
+              <path d="M342 890q22-8 44 0t44 0t44 0t44 0" />
             </g>
 
-            {/* うさ湯 钱汤招牌与分支 */}
-            <g transform="translate(544, 42)">
-              <rect
-                x="0"
-                y="0"
-                width="124"
-                height="122"
-                rx="18"
-                fill="#E9FBF8"
-                stroke="#31CBB7"
-                strokeWidth="2"
+            {/* North Bathhouse: うさ湯 + Yumoto Choji & Sayuri Avatars */}
+            <g>
+              <line
+                x1="602"
+                y1="72"
+                x2="602"
+                y2="196"
+                stroke="#93D548"
+                strokeWidth="3"
                 strokeDasharray="6 4"
               />
+              <line
+                x1="678"
+                y1="72"
+                x2="678"
+                y2="196"
+                stroke="#93D548"
+                strokeWidth="3"
+                strokeDasharray="6 4"
+              />
+              <rect
+                x="568"
+                y="46"
+                width="144"
+                height="120"
+                rx="20"
+                fill="#E9FBF8"
+                stroke="#31CBB7"
+                strokeWidth="2.4"
+              />
+              {/* Karahafu wooden bathhouse roof & noren */}
+              <path
+                d="M578 72 Q640 48 702 72"
+                fill="#FAF4E0"
+                stroke="#8E4C28"
+                strokeWidth="2.5"
+              />
+              <rect x="610" y="72" width="18" height="16" rx="2" fill="#41A8DD" />
+              <rect x="631" y="72" width="18" height="16" rx="2" fill="#41A8DD" />
+              <rect x="652" y="72" width="18" height="16" rx="2" fill="#FF7B82" />
               <text
-                x="62"
-                y="24"
-                textAnchor="middle"
-                fill="#13463F"
-                fontSize="12"
-                fontWeight="700"
-              >
-                お風呂屋さん
-              </text>
-              <text
-                x="62"
-                y="110"
+                x="640"
+                y="154"
                 textAnchor="middle"
                 fill="#13463F"
                 fontSize="16"
                 fontWeight="900"
               >
-                うさ湯
+                うさ湯（銭湯）
+              </text>
+
+              {/* Choji & Sayuri circular portraits (like official bg.png!) */}
+              <g transform="translate(544, 86)">
+                <circle r="25" fill="#FFFFFF" stroke="#93D548" strokeWidth="2.5" />
+                <image
+                  href="/images/avatars/usayu_choji.webp"
+                  x="-22"
+                  y="-22"
+                  width="44"
+                  height="44"
+                  clipPath="url(#clipR22)"
+                />
+              </g>
+              <g transform="translate(736, 86)">
+                <circle r="25" fill="#FFFFFF" stroke="#FF979D" strokeWidth="2.5" />
+                <image
+                  href="/images/avatars/usayu_sayuri.webp"
+                  x="-22"
+                  y="-22"
+                  width="44"
+                  height="44"
+                  clipPath="url(#clipR22)"
+                />
+              </g>
+              <text x="736" y="126" textAnchor="middle" fill="#C84B12" fontSize="11.5" fontWeight="800">
+                お風呂屋さん
               </text>
             </g>
 
-            {/* 商店街双兔圆月入口拱门装饰（主街入口处） */}
-            <g transform="translate(346, 184)">
+            {/* Usagiyama Arcade Twin-Rabbit Moon Entrance Arch */}
+            <g transform="translate(362, 178)">
               <rect
                 x="0"
                 y="0"
-                width="128"
-                height="50"
-                rx="12"
+                width="136"
+                height="54"
+                rx="14"
                 fill="#2E62A2"
                 stroke="#FFFFFF"
-                strokeWidth="2.5"
+                strokeWidth="3"
               />
-              <circle cx="24" cy="25" r="13" fill="#FAF4E0" />
-              {/* 双兔小剪影 */}
-              <circle cx="21" cy="26" r="4" fill="#FFFFFF" />
-              <circle cx="28" cy="27" r="3.5" fill="#FFFFFF" />
+              <circle cx="27" cy="27" r="15" fill="#FAF4E0" />
+              <circle cx="23" cy="28" r="4.5" fill="#FFFFFF" />
+              <circle cx="31" cy="29" r="3.8" fill="#FFFFFF" />
               <text
-                x="78"
-                y="22"
+                x="84"
+                y="23"
                 textAnchor="middle"
                 fill="#FFFFFF"
-                fontSize="11.5"
+                fontSize="12"
                 fontWeight="900"
               >
                 うさぎ山商店街
               </text>
               <text
-                x="78"
-                y="39"
+                x="84"
+                y="41"
                 textAnchor="middle"
                 fill="#FAF4E0"
-                fontSize="10.5"
+                fontSize="11"
                 fontWeight="700"
               >
                 入口アーチ
               </text>
             </g>
 
-            {/* 主街左侧店铺牌坊（绿色虚线框，呼应官网 bg.png） */}
-            {SHOP_SIGNS.map((shop) => (
+            {/* Left Column Shops with Striped Awnings & Real Shopkeeper Avatars */}
+            {LEFT_SHOPS.map((shop) => (
               <g key={shop.id}>
+                {/* Dashed connector to street */}
                 <line
                   x1={shop.connectorFromX}
                   y1={shop.connectorY}
@@ -514,36 +648,71 @@ export function ArcadeMap({
                   strokeWidth="3"
                   strokeDasharray="6 4"
                 />
+
+                {/* Shop building card */}
                 <rect
                   x={shop.x}
                   y={shop.y}
                   width={shop.w}
                   height={shop.h}
-                  rx="12"
-                  fill="#FFFFFF"
-                  stroke="#93D548"
+                  rx="14"
+                  fill={shop.wallBg}
+                  stroke={shop.borderColor}
                   strokeWidth="2.4"
-                  strokeDasharray="6 4"
                 />
+                {/* Cute striped shop awning eave */}
+                <rect
+                  x={shop.x + 6}
+                  y={shop.y + 4}
+                  width={shop.w - 12}
+                  height="11"
+                  rx="5"
+                  fill={shop.roofA}
+                />
+                <rect
+                  x={shop.x + 22}
+                  y={shop.y + 4}
+                  width="18"
+                  height="11"
+                  fill={shop.roofB}
+                />
+                <rect
+                  x={shop.x + 58}
+                  y={shop.y + 4}
+                  width="18"
+                  height="11"
+                  fill={shop.roofB}
+                />
+                <rect
+                  x={shop.x + 94}
+                  y={shop.y + 4}
+                  width="18"
+                  height="11"
+                  fill={shop.roofB}
+                />
+
+                {/* Category handwritten callout */}
                 <text
                   x={shop.x + shop.w / 2}
-                  y={shop.tagSide === "top" ? shop.y - 8 : shop.y + shop.h + 16}
+                  y={shop.y - 7}
                   textAnchor="middle"
                   fill="#C84B12"
                   fontSize="12"
-                  fontWeight="700"
+                  fontWeight="800"
                 >
                   {shop.tag}
                 </text>
+
+                {/* Shop Name */}
                 {shop.name.includes("\n") ? (
                   shop.name.split("\n").map((line, idx) => (
                     <text
                       key={line}
                       x={shop.x + shop.w / 2}
-                      y={shop.y + 26 + idx * 19}
+                      y={shop.y + 36 + idx * 19}
                       textAnchor="middle"
                       fill="#234712"
-                      fontSize="15"
+                      fontSize="14.5"
                       fontWeight="900"
                     >
                       {line}
@@ -552,207 +721,335 @@ export function ArcadeMap({
                 ) : (
                   <text
                     x={shop.x + shop.w / 2}
-                    y={shop.y + 34}
+                    y={shop.y + 46}
                     textAnchor="middle"
                     fill="#234712"
-                    fontSize="16"
+                    fontSize="16.5"
                     fontWeight="900"
                   >
                     {shop.name}
                   </text>
                 )}
+
+                {/* Shopkeeper Circular Portrait Medallions */}
+                {shop.avatars.map((av) => (
+                  <g key={av.src} transform={`translate(${av.cx}, ${av.cy})`}>
+                    <circle
+                      r="25"
+                      fill="#FFFFFF"
+                      stroke={av.ring}
+                      strokeWidth="2.6"
+                    />
+                    <image
+                      href={av.src}
+                      x="-22"
+                      y="-22"
+                      width="44"
+                      height="44"
+                      clipPath="url(#clipR22)"
+                    />
+                  </g>
+                ))}
               </g>
             ))}
 
-            {/* 中心十字路口淡蓝サバさん大鲭鱼剪影 */}
-            <g transform="translate(362, 668)">
+            {/* Central Crossroads Hanging Mackerel: サバさん */}
+            <g transform="translate(376, 668)">
               <path
-                d="M12 40c18-22 44-28 68-12l14-9-4 20 14 12-20-2c-16 12-46 16-72-9z"
+                d="M12 44c20-24 48-30 74-12l16-10-4 22 15 13-22-2c-18 14-50 18-79-11z"
                 fill="#E3F5FF"
                 stroke="#41A8DD"
-                strokeWidth="2.5"
+                strokeWidth="2.6"
                 strokeLinejoin="round"
               />
-              <circle cx="32" cy="33" r="3" fill="#41A8DD" />
+              <path d="M36 28q16 6 32 0M38 36q16 6 30 0" stroke="#7CC8F2" strokeWidth="1.8" fill="none" />
+              <circle cx="30" cy="36" r="3.2" fill="#184070" />
               <text
-                x="50"
+                x="56"
                 y="-4"
                 textAnchor="middle"
                 fill="#184070"
-                fontSize="12"
+                fontSize="12.5"
                 fontWeight="900"
               >
-                サバさん（中心路口）
+                サバさん（中心十字路）
               </text>
             </g>
 
-            {/* 右侧肉店 ジャストミート */}
+            {/* Center Info Note Box (inspired by official bg.png legend box, repurposed as Arcade Landmark Guide) */}
+            <g transform="translate(534, 316)">
+              <rect
+                x="0"
+                y="0"
+                width="206"
+                height="108"
+                rx="18"
+                fill="#FAF4E0"
+                fillOpacity="0.78"
+                stroke="#D8BDA3"
+                strokeWidth="1.8"
+                strokeDasharray="6 4"
+              />
+              <text x="18" y="30" fill="#993338" fontSize="13.5" fontWeight="900">
+                ✦ 街坊手账导览
+              </text>
+              <text x="18" y="54" fill="#8E4C28" fontSize="12" fontWeight="700">
+                · 圆框肖像：各店看板店主
+              </text>
+              <text x="18" y="76" fill="#8E4C28" fontSize="12" fontWeight="700">
+                · 金框剧照章：点击看该店剧情
+              </text>
+              <text x="18" y="96" fill="#BF3B5E" fontSize="11.5" fontWeight="800">
+                · 东支路二楼：玉子 ↔ 饼藏糸電話
+              </text>
+            </g>
+
+            {/* Right Column: Just Meat (ジャストミート) + Fumiko Avatar */}
             <g>
               <line
-                x1="474"
-                y1="822"
-                x2="550"
-                y2="822"
+                x1="504"
+                y1="834"
+                x2="582"
+                y2="834"
                 stroke="#93D548"
                 strokeWidth="3"
                 strokeDasharray="6 4"
               />
               <rect
-                x="550"
-                y="792"
-                width="104"
-                height="62"
-                rx="12"
+                x="582"
+                y="800"
+                width="118"
+                height="70"
+                rx="14"
                 fill="#FFF3EA"
                 stroke="#F69E6E"
-                strokeWidth="2.2"
-                strokeDasharray="6 4"
+                strokeWidth="2.4"
               />
+              <rect x="588" y="804" width="106" height="10" rx="5" fill="#93D548" />
               <text
-                x="602"
-                y="784"
+                x="641"
+                y="792"
                 textAnchor="middle"
                 fill="#C84B12"
                 fontSize="12"
-                fontWeight="700"
+                fontWeight="800"
               >
                 お肉屋さん
               </text>
               <text
-                x="602"
-                y="819"
+                x="641"
+                y="835"
                 textAnchor="middle"
                 fill="#5C2226"
-                fontSize="13.5"
+                fontSize="14"
                 fontWeight="900"
               >
                 ジャスト
               </text>
               <text
-                x="602"
-                y="838"
+                x="641"
+                y="855"
                 textAnchor="middle"
                 fill="#5C2226"
-                fontSize="13.5"
+                fontSize="14"
                 fontWeight="900"
               >
                 ミート
               </text>
+              <g transform="translate(696, 892)">
+                <circle r="24" fill="#FFFFFF" stroke="#F69E6E" strokeWidth="2.6" />
+                <image
+                  href="/images/avatars/justmeat_fumiko.webp"
+                  x="-22"
+                  y="-22"
+                  width="44"
+                  height="44"
+                  clipPath="url(#clipR22)"
+                />
+              </g>
             </g>
 
-            {/* 右侧东支路：たまや vs RICE CAKE Oh!ZEE & 纸杯电话连线 */}
+            {/* East Side Street: Tamaya (たまや) vs RICE CAKE Oh!ZEE + String Phone */}
             <g>
-              {/* 玉屋招牌框 */}
+              {/* Tamaya Mochi Shop + Mamedai & Tamako Avatars */}
               <rect
-                x="644"
-                y="530"
-                width="126"
-                height="104"
-                rx="18"
+                x="696"
+                y="508"
+                width="148"
+                height="122"
+                rx="20"
                 fill="#FFF4F7"
                 stroke="#FF7B82"
-                strokeWidth="2.2"
+                strokeWidth="2.5"
               />
+              {/* 3-panel Indigo Noren */}
+              <rect x="716" y="516" width="32" height="22" rx="3" fill="#2E62A2" />
+              <rect x="754" y="516" width="32" height="22" rx="3" fill="#2E62A2" />
+              <rect x="792" y="516" width="32" height="22" rx="3" fill="#2E62A2" />
+              <text x="732" y="531" textAnchor="middle" fill="#FFFFFF" fontSize="11" fontWeight="900">
+                た
+              </text>
+              <text x="770" y="531" textAnchor="middle" fill="#FFFFFF" fontSize="11" fontWeight="900">
+                ま
+              </text>
+              <text x="808" y="531" textAnchor="middle" fill="#FFFFFF" fontSize="11" fontWeight="900">
+                や
+              </text>
               <text
-                x="707"
+                x="770"
                 y="622"
                 textAnchor="middle"
                 fill="#993338"
-                fontSize="15.5"
+                fontSize="15"
                 fontWeight="900"
               >
-                たまや（玉屋）
+                たまや（北白川家）
               </text>
+              {/* Mamedai & Tamako portraits above Tamaya */}
+              <g transform="translate(742, 474)">
+                <circle r="26" fill="#FFFFFF" stroke="#DE9132" strokeWidth="2.6" />
+                <image
+                  href="/images/avatars/mamedai.webp"
+                  x="-24"
+                  y="-24"
+                  width="48"
+                  height="48"
+                  clipPath="url(#clipR24)"
+                />
+              </g>
+              <g transform="translate(800, 474)">
+                <circle r="26" fill="#FFFFFF" stroke="#FF7B82" strokeWidth="2.6" />
+                <image
+                  href="/images/avatars/tamako.webp"
+                  x="-24"
+                  y="-24"
+                  width="48"
+                  height="48"
+                  clipPath="url(#clipR24)"
+                />
+              </g>
 
-              {/* 二楼窗台纸杯电话连线 */}
-              <line
-                x1="707"
-                y1="634"
-                x2="707"
-                y2="808"
-                stroke="#BF3B5E"
-                strokeWidth="2.5"
-                strokeDasharray="5 4"
+              {/* Paper-Cup String Phone Red Line across the lane */}
+              <path
+                d="M766 632 C756 676, 776 768, 766 812"
+                fill="none"
+                stroke="#E4362D"
+                strokeWidth="2.8"
+                strokeDasharray="6 4"
               />
+              {/* Cute Paper Cups at both ends */}
+              <polygon points="758,636 774,636 771,650 761,650" fill="#FFFFFF" stroke="#BF3B5E" strokeWidth="2" />
+              <polygon points="761,796 771,796 774,810 758,810" fill="#FFFFFF" stroke="#2E62A2" strokeWidth="2" />
 
-              {/* 爆裂形状：ライバルもち屋 */}
+              {/* Rival Starburst Badge */}
               <polygon
-                points="647,688 671,696 687,680 707,694 729,680 743,696 773,688 759,716 773,744 743,736 729,752 707,738 687,752 671,736 647,744 661,716"
+                points="698,698 724,706 742,688 766,704 790,688 808,706 836,698 820,726 836,754 808,746 790,764 766,748 742,764 724,746 698,754 714,726"
                 fill="#FAF4E0"
                 stroke="#E4362D"
                 strokeWidth="2.2"
                 strokeLinejoin="round"
               />
               <text
-                x="707"
-                y="764"
-                textAnchor="middle"
+                x="850"
+                y="724"
                 fill="#C84B12"
-                fontSize="11.5"
-                fontWeight="900"
-              >
-                ライバルもち屋 · 糸電話
-              </text>
-
-              {/* 大路屋招牌框 */}
-              <rect
-                x="644"
-                y="808"
-                width="126"
-                height="106"
-                rx="18"
-                fill="#EDF3FA"
-                stroke="#2E62A2"
-                strokeWidth="2.2"
-              />
-              <text
-                x="707"
-                y="886"
-                textAnchor="middle"
-                fill="#184070"
-                fontSize="13.5"
-                fontWeight="900"
-              >
-                RICE CAKE
-              </text>
-              <text
-                x="707"
-                y="904"
-                textAnchor="middle"
-                fill="#184070"
                 fontSize="12"
                 fontWeight="900"
               >
-                Oh!ZEE（大路屋）
+                ライバル
               </text>
-            </g>
-
-            {/* 指南针角标 */}
-            <g transform="translate(722, 74)">
-              <circle
-                cx="30"
-                cy="30"
-                r="26"
-                fill="#FAF4E0"
-                stroke="#D8BDA3"
-                strokeWidth="2"
-              />
-              <polygon points="30,10 36,30 30,26 24,30" fill="#BF3B5E" />
-              <polygon points="30,50 35,30 30,34 25,30" fill="#D8BDA3" />
               <text
-                x="30"
-                y="68"
-                textAnchor="middle"
-                fill="#8A5A36"
-                fontSize="11"
+                x="850"
+                y="742"
+                fill="#BF3B5E"
+                fontSize="12"
                 fontWeight="900"
               >
-                北（入口側）
+                二階糸電話
+              </text>
+
+              {/* Oojiya / RICE CAKE Oh!ZEE + Gohei & Mochizou Avatars */}
+              <rect
+                x="696"
+                y="812"
+                width="148"
+                height="122"
+                rx="20"
+                fill="#EDF3FA"
+                stroke="#2E62A2"
+                strokeWidth="2.5"
+              />
+              <rect x="712" y="820" width="116" height="18" rx="6" fill="#2E62A2" />
+              <text
+                x="770"
+                y="833"
+                textAnchor="middle"
+                fill="#FFFFFF"
+                fontSize="10.5"
+                fontWeight="900"
+              >
+                RICE CAKE Oh!ZEE
+              </text>
+              <text
+                x="770"
+                y="926"
+                textAnchor="middle"
+                fill="#184070"
+                fontSize="14"
+                fontWeight="900"
+              >
+                大路屋（Oh!ZEE）
+              </text>
+              <g transform="translate(742, 968)">
+                <circle r="26" fill="#FFFFFF" stroke="#2E62A2" strokeWidth="2.6" />
+                <image
+                  href="/images/avatars/gohei.webp"
+                  x="-24"
+                  y="-24"
+                  width="48"
+                  height="48"
+                  clipPath="url(#clipR24)"
+                />
+              </g>
+              <g transform="translate(800, 968)">
+                <circle r="26" fill="#FFFFFF" stroke="#41A8DD" strokeWidth="2.6" />
+                <image
+                  href="/images/avatars/mochizou.webp"
+                  x="-24"
+                  y="-24"
+                  width="48"
+                  height="48"
+                  clipPath="url(#clipR24)"
+                />
+              </g>
+            </g>
+
+            {/* Compass Rose (Top Right) */}
+            <g transform="translate(822, 74)">
+              <circle
+                cx="34"
+                cy="34"
+                r="28"
+                fill="#FAF4E0"
+                stroke="#EDD18F"
+                strokeWidth="2.2"
+              />
+              <polygon points="34,12 41,34 34,29 27,34" fill="#BF3B5E" />
+              <polygon points="34,56 40,34 34,39 28,34" fill="#D8BDA3" />
+              <text
+                x="34"
+                y="78"
+                textAnchor="middle"
+                fill="#8A5A36"
+                fontSize="11.5"
+                fontWeight="900"
+              >
+                北（出町口）
               </text>
             </g>
           </svg>
 
-          {/* 13 个键盘可达圆章热点（>= 44x44px） */}
+          {/* 13 Photo-Stamp Hotspots with Real Anime Scene Thumbnails */}
           {ARCADE_LOCATIONS.map((loc) => {
             const coord = loc.arcadeCoord!;
             const hits = getLocationEvents(events, loc.id, "arcade");
@@ -763,7 +1060,7 @@ export function ArcadeMap({
               <button
                 key={loc.id}
                 type="button"
-                className={`tamako-arcade-hotspot tamako-pin--${loc.tone}${
+                className={`tamako-arcade-pin tamako-pin--${loc.tone}${
                   isSelected ? " is-selected" : ""
                 }${dimmed ? " is-dimmed" : ""}`}
                 style={{
@@ -784,7 +1081,13 @@ export function ArcadeMap({
                   )
                 }
               >
-                <SceneIcon kind={getDefaultIconForLocation(loc)} size={21} />
+                <img
+                  className="tamako-arcade-pin-img"
+                  src={loc.imageUrl}
+                  alt=""
+                  loading="eager"
+                  decoding="async"
+                />
                 <span className="tamako-hotspot-badge">{hits.length}</span>
               </button>
             );

@@ -1,18 +1,12 @@
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from "react";
 import { ArcadeMap } from "./components/ArcadeMap";
-import { EpisodeGuide } from "./components/EpisodeGuide";
-import { EventDirectory } from "./components/EventDirectory";
+import { ArchiveModal } from "./components/ArchiveModal";
+import { DeraTourDock } from "./components/DeraTourDock";
+import { EventDirectoryDrawer } from "./components/EventDirectoryDrawer";
 import { EventModal } from "./components/EventModal";
-import { FilterPanel } from "./components/FilterPanel";
-import { Header } from "./components/Header";
-import { HeroAwning } from "./components/HeroAwning";
-import { FloretIcon } from "./components/Icons";
+import { FilterDrawer } from "./components/FilterDrawer";
+import { Header, type FilterTabFocus } from "./components/Header";
 import { MapSidebar } from "./components/MapSidebar";
-import { PilgrimageFooter } from "./components/PilgrimageFooter";
-
-const KyotoMap = lazy(() =>
-  import("./components/KyotoMap").then((mod) => ({ default: mod.KyotoMap }))
-);
 import { CHARACTER_MAP } from "./data/characters";
 import { EPISODE_MAP } from "./data/episodes";
 import { STORY_EVENT_MAP, STORY_EVENTS } from "./data/events";
@@ -34,39 +28,67 @@ import type {
   WorkKind,
 } from "./types/tamako";
 
+const KyotoMap = lazy(() =>
+  import("./components/KyotoMap").then((mod) => ({ default: mod.KyotoMap }))
+);
+
 const DEFAULT_HINT =
-  "欢迎来到兔山商店街！可以按集数、人物筛选剧情，也可以点击地图圆章查看每一幕的舞台与名台词もち。";
+  "欢迎来到兔山商店街！点击地图上的金框剧照圆章查看名场面，也可从上方导航按集数或人物头像筛选もち。";
 
 export default function App() {
   const initialUrl = useMemo(
     () =>
       typeof window !== "undefined"
         ? parseUrlState(window.location.search)
-        : { view: "arcade" as MapViewMode, filter: DEFAULT_FILTER_STATE, eventId: null },
+        : {
+            view: "arcade" as MapViewMode,
+            filter: DEFAULT_FILTER_STATE,
+            eventId: null,
+          },
     []
   );
 
   const [view, setView] = useState<MapViewMode>(initialUrl.view);
   const [filter, setFilter] = useState<FilterState>(initialUrl.filter);
-  const [modalEventId, setModalEventId] = useState<string | null>(initialUrl.eventId);
+  const [modalEventId, setModalEventId] = useState<string | null>(
+    initialUrl.eventId
+  );
   const [selectedEventId, setSelectedEventId] = useState<string | null>(
     initialUrl.eventId
   );
   const [selectedArcadeLocId, setSelectedArcadeLocId] = useState<string>(() => {
-    if (initialUrl.eventId && STORY_EVENT_MAP[initialUrl.eventId]?.arcadeLocationId) {
+    if (
+      initialUrl.eventId &&
+      STORY_EVENT_MAP[initialUrl.eventId]?.arcadeLocationId
+    ) {
       return STORY_EVENT_MAP[initialUrl.eventId].arcadeLocationId!;
     }
     return "tamaya-shop";
   });
   const [selectedKyotoLocId, setSelectedKyotoLocId] = useState<string>(() => {
-    if (initialUrl.eventId && STORY_EVENT_MAP[initialUrl.eventId]?.kyotoLocationId) {
+    if (
+      initialUrl.eventId &&
+      STORY_EVENT_MAP[initialUrl.eventId]?.kyotoLocationId
+    ) {
       return STORY_EVENT_MAP[initialUrl.eventId].kyotoLocationId!;
     }
     return "kyoto-masugata";
   });
+
+  // Inspector open by default on wide desktop (>= 900px), compact pill on mobile so map fills viewport
+  const [inspectorExpanded, setInspectorExpanded] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.innerWidth >= 900 : true
+  );
+
+  // Navigation Drawers / Modals
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterTabFocus, setFilterTabFocus] = useState<FilterTabFocus>("all");
+  const [directoryOpen, setDirectoryOpen] = useState(false);
+  const [archiveOpen, setArchiveOpen] = useState(false);
+
   const [mascotHint, setMascotHint] = useState<string>(DEFAULT_HINT);
 
-  // Sync URL query params cleanly without creating browser history spam
+  // Sync URL query params cleanly
   useEffect(() => {
     const query = serializeUrlState({
       view,
@@ -117,11 +139,12 @@ export default function App() {
       } else {
         setSelectedKyotoLocId(locId);
       }
+      setInspectorExpanded(true);
       const loc = LOCATION_MAP[locId];
       if (loc) {
         const hits = getLocationEvents(filteredEvents, locId, view);
         setMascotHint(
-          `已选中「${loc.nameZh}」：此处当前有 ${hits.length} 条剧情事件。${loc.subtitle}もち！`
+          `已选中「${loc.nameZh}」：当前有 ${hits.length} 幕剧情。${loc.subtitle}もち！`
         );
         if (hits.length > 0) {
           setSelectedEventId(hits[0].id);
@@ -140,6 +163,7 @@ export default function App() {
         setSelectedKyotoLocId(locId);
       }
       setSelectedEventId(eventId);
+      setInspectorExpanded(true);
       const ev = STORY_EVENT_MAP[eventId];
       if (ev) {
         setMascotHint(`已定位「${ev.titleZh}」（${ev.sceneBadge}）もち！`);
@@ -174,16 +198,18 @@ export default function App() {
     [filteredEvents, selectedEventId, view, locateEventOnMap, modalEventId]
   );
 
-  const startTour = useCallback(() => {
+  const openCurrentTourModal = useCallback(() => {
     if (filteredEvents.length === 0) return;
-    const first = filteredEvents[0];
-    const pref = getPreferredViewForEvent(first, view);
+    const current =
+      (selectedEventId &&
+        filteredEvents.find((e) => e.id === selectedEventId)) ||
+      filteredEvents[0];
+    const pref = getPreferredViewForEvent(current, view);
     if (pref.locationId) {
-      locateEventOnMap(pref.view, pref.locationId, first.id);
+      locateEventOnMap(pref.view, pref.locationId, current.id);
     }
-    setModalEventId(first.id);
-    document.getElementById("map-stage")?.scrollIntoView({ behavior: "smooth" });
-  }, [filteredEvents, view, locateEventOnMap]);
+    setModalEventId(current.id);
+  }, [filteredEvents, selectedEventId, view, locateEventOnMap]);
 
   const handleChangeWork = useCallback((work: "all" | WorkKind) => {
     setFilter((prev) => ({
@@ -250,6 +276,7 @@ export default function App() {
           setSelectedKyotoLocId(pref.locationId);
         }
         setSelectedEventId(matching[0].id);
+        setInspectorExpanded(true);
       }
     }
     if (ep) {
@@ -259,14 +286,28 @@ export default function App() {
 
   const handleFilterSingleCharacter = useCallback((charId: string) => {
     const ch = CHARACTER_MAP[charId];
-    setFilter({
+    const nextFilter: FilterState = {
       ...DEFAULT_FILTER_STATE,
       characterIds: [charId],
-    });
+    };
+    setFilter(nextFilter);
+    const matching = filterEvents(STORY_EVENTS, nextFilter);
+    if (matching.length > 0) {
+      const pref = getPreferredViewForEvent(matching[0], view);
+      if (pref.locationId) {
+        setView(pref.view);
+        if (pref.view === "arcade") {
+          setSelectedArcadeLocId(pref.locationId);
+        } else {
+          setSelectedKyotoLocId(pref.locationId);
+        }
+        setSelectedEventId(matching[0].id);
+      }
+    }
     if (ch) {
       setMascotHint(`已筛选「${ch.nameZh}」登场全部名场面もち！`);
     }
-  }, []);
+  }, [view]);
 
   const handleResetFilters = useCallback(() => {
     setFilter(DEFAULT_FILTER_STATE);
@@ -285,234 +326,230 @@ export default function App() {
   const activeFiltersFlag = hasActiveFilters(filter);
 
   return (
-    <div className="tamako-app">
-      <Header onHoverHint={setMascotHint} />
+    <div className="tamako-app-shell">
+      <Header
+        view={view}
+        filter={filter}
+        arcadeCount={arcadeMatchedCount}
+        kyotoCount={kyotoMatchedCount}
+        matchedCount={filteredEvents.length}
+        onSwitchView={setView}
+        onOpenFilter={(focus) => {
+          setFilterTabFocus(focus);
+          setFilterOpen(true);
+        }}
+        onOpenDirectory={() => setDirectoryOpen(true)}
+        onOpenArchive={() => setArchiveOpen(true)}
+        onHoverHint={setMascotHint}
+      />
 
-      <main>
-        <HeroAwning
-          totalCount={STORY_EVENTS.length}
-          matchedCount={filteredEvents.length}
-          activeView={view}
-          mascotHint={mascotHint}
-          onStartTour={startTour}
-          onSwitchView={setView}
-        />
-
-        <FilterPanel
-          filter={filter}
-          matchedCount={filteredEvents.length}
-          totalCount={STORY_EVENTS.length}
-          episodeCounts={episodeCounts}
-          characterCounts={characterCounts}
-          onChangeWork={handleChangeWork}
-          onToggleEpisode={handleToggleEpisode}
-          onToggleCharacter={handleToggleCharacter}
-          onChangeCharMatch={(charMatch: CharMatchMode) =>
-            setFilter((prev) => ({ ...prev, charMatch }))
-          }
-          onChangeQuery={(query: string) =>
-            setFilter((prev) => ({ ...prev, query }))
-          }
-          onReset={handleResetFilters}
-          onHoverHint={setMascotHint}
-        />
-
-        <section
-          id="map-stage"
-          className="tamako-island tamako-island--wide"
-          aria-label="双视角交互式剧情地图"
-        >
-          <div className="tamako-island-inner">
-            <div className="tamako-map-header">
-              <div>
-                <h2 className="tamako-section-title">
-                  <FloretIcon size={20} />
-                  <span>
-                    {view === "arcade"
-                      ? "兔山商店街手绘平面图"
-                      : "京都圣地实景巡礼图"}
-                  </span>
-                </h2>
-                <p
-                  className="tamako-prose"
-                  style={{ margin: "4px 0 0", fontSize: "0.88rem" }}
-                >
-                  {view === "arcade"
-                    ? "还原官方商店街地图左右店铺与东支路布局，支持拖拽缩放与键盘点选热点。"
-                    : "覆盖出町桝形、鸭川三角洲、藤森通学路、兔山高校原型与 JR 京都站真实坐标。"}
-                </p>
-              </div>
-
-              <div className="tamako-tour-bar">
-                <div className="tamako-view-switch" role="group" aria-label="地图视角切换">
-                  <button
-                    type="button"
-                    className="tamako-view-btn"
-                    aria-pressed={view === "arcade"}
-                    onClick={() => setView("arcade")}
-                  >
-                    <span>兔山商店街</span>
-                    <span className="tamako-ep-count">{arcadeMatchedCount}</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="tamako-view-btn"
-                    aria-pressed={view === "kyoto"}
-                    onClick={() => setView("kyoto")}
-                  >
-                    <span>京都实景图</span>
-                    <span className="tamako-ep-count">{kyotoMatchedCount}</span>
-                  </button>
-                </div>
-
+      <main id="map-stage" className="tamako-map-shell" aria-label="交互式剧情地图主舞台">
+        {/* Active Filter Chips & Cross-Map Hint Banner */}
+        {activeFiltersFlag && (
+          <div className="tamako-active-filter-strip" aria-label="当前生效筛选条件">
+            {filter.work !== "all" && (
+              <span className="tamako-active-chip">
+                <span>
+                  {filter.work === "tv"
+                    ? "TV 全12话"
+                    : filter.work === "movie"
+                      ? "剧场版"
+                      : "南国短片"}
+                </span>
                 <button
                   type="button"
-                  className="tamako-pill-btn"
-                  disabled={filteredEvents.length === 0}
-                  onClick={() => stepTour(-1)}
+                  aria-label="移除作品筛选"
+                  onClick={() => handleChangeWork("all")}
                 >
-                  ← 上一幕
+                  ×
                 </button>
+              </span>
+            )}
+
+            {filter.episodeIds.map((epId) => {
+              const ep = EPISODE_MAP[epId];
+              return ep ? (
+                <span key={epId} className="tamako-active-chip">
+                  <span>{ep.shortLabel}</span>
+                  <button
+                    type="button"
+                    aria-label={`移除 ${ep.shortLabel}`}
+                    onClick={() => handleToggleEpisode(epId)}
+                  >
+                    ×
+                  </button>
+                </span>
+              ) : null;
+            })}
+
+            {filter.characterIds.map((cid) => {
+              const ch = CHARACTER_MAP[cid];
+              return ch ? (
+                <span key={cid} className="tamako-active-chip is-avatar">
+                  <img src={ch.avatarUrl} alt="" />
+                  <span>{ch.nameZh}</span>
+                  <button
+                    type="button"
+                    aria-label={`移除 ${ch.nameZh}`}
+                    onClick={() => handleToggleCharacter(cid)}
+                  >
+                    ×
+                  </button>
+                </span>
+              ) : null;
+            })}
+
+            {filter.query.trim() && (
+              <span className="tamako-active-chip">
+                <span>“{filter.query.trim()}”</span>
                 <button
                   type="button"
-                  className="tamako-pill-btn is-primary"
-                  disabled={filteredEvents.length === 0}
-                  onClick={() => stepTour(1)}
+                  aria-label="清除搜索关键词"
+                  onClick={() => setFilter((p) => ({ ...p, query: "" }))}
                 >
-                  下一幕
-                  {activeIndexInFiltered >= 0
-                    ? ` (${activeIndexInFiltered + 1}/${filteredEvents.length})`
-                    : ""}{" "}
-                  →
+                  ×
                 </button>
-              </div>
-            </div>
+              </span>
+            )}
 
             {view === "arcade" &&
               arcadeMatchedCount === 0 &&
               kyotoMatchedCount > 0 && (
-                <div
-                  className="tamako-staff-reply"
-                  style={{
-                    marginTop: 0,
-                    marginBottom: 14,
-                    display: "flex",
-                    flexWrap: "wrap",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: 10,
-                  }}
+                <button
+                  type="button"
+                  className="tamako-pill-btn is-primary"
+                  style={{ minHeight: 30, padding: "3px 11px", fontSize: "0.78rem" }}
+                  onClick={() => setView("kyoto")}
                 >
-                  <span>
-                    当前筛选的 {kyotoMatchedCount} 条剧情事件发生在商店街之外（如鸭川、藤森或京都站）。
-                  </span>
-                  <button
-                    type="button"
-                    className="tamako-pill-btn is-primary"
-                    onClick={() => setView("kyoto")}
-                  >
-                    切换到京都实景图查看 →
-                  </button>
-                </div>
+                  命中 {kyotoMatchedCount} 幕位于京都地图 → 点击切换
+                </button>
               )}
 
             {view === "kyoto" &&
               kyotoMatchedCount === 0 &&
               arcadeMatchedCount > 0 && (
-                <div
-                  className="tamako-staff-reply"
-                  style={{
-                    marginTop: 0,
-                    marginBottom: 14,
-                    display: "flex",
-                    flexWrap: "wrap",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: 10,
-                  }}
+                <button
+                  type="button"
+                  className="tamako-pill-btn is-primary"
+                  style={{ minHeight: 30, padding: "3px 11px", fontSize: "0.78rem" }}
+                  onClick={() => setView("arcade")}
                 >
-                  <span>当前筛选事件均发生在兔山商店街内部。</span>
-                  <button
-                    type="button"
-                    className="tamako-pill-btn is-primary"
-                    onClick={() => setView("arcade")}
-                  >
-                    切回兔山商店街查看 →
-                  </button>
-                </div>
+                  命中 {arcadeMatchedCount} 幕位于商店街 → 点击切换
+                </button>
               )}
 
-            <div className="tamako-map-workbench">
-              {view === "arcade" ? (
-                <ArcadeMap
-                  events={filteredEvents}
-                  selectedLocationId={selectedArcadeLocId}
-                  onSelectLocation={handleSelectLocation}
-                  onHoverHint={setMascotHint}
-                />
-              ) : (
-                <Suspense
-                  fallback={
-                    <div
-                      className="tamako-map-stage"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "var(--tamako-ink)",
-                        fontWeight: 700,
-                      }}
-                    >
-                      正在展开京都实景巡礼地图もち…
-                    </div>
-                  }
-                >
-                  <KyotoMap
-                    events={filteredEvents}
-                    selectedLocationId={selectedKyotoLocId}
-                    onSelectLocation={handleSelectLocation}
-                    onHoverHint={setMascotHint}
-                  />
-                </Suspense>
-              )}
-
-              <MapSidebar
-                view={view}
-                location={activeLocation}
-                locationEvents={activeLocationEvents}
-                selectedEventId={selectedEventId}
-                hasFilters={activeFiltersFlag}
-                onSelectEvent={(id) => setSelectedEventId(id)}
-                onOpenModal={(id) => setModalEventId(id)}
-                onSwitchToLocation={(targetView, targetLocId) => {
-                  setView(targetView);
-                  if (targetView === "arcade") {
-                    setSelectedArcadeLocId(targetLocId);
-                  } else {
-                    setSelectedKyotoLocId(targetLocId);
-                  }
-                }}
-                onResetFilters={handleResetFilters}
-              />
-            </div>
+            <button
+              type="button"
+              className="tamako-active-clear"
+              onClick={handleResetFilters}
+            >
+              清空筛选
+            </button>
           </div>
-        </section>
+        )}
 
-        <EventDirectory
-          events={filteredEvents}
-          activeView={view}
-          onLocateEvent={locateEventOnMap}
-          onOpenModal={(id) => {
-            setSelectedEventId(id);
-            setModalEventId(id);
-          }}
-          onResetFilters={handleResetFilters}
+        {/* Core Full-Viewport Interactive Map */}
+        {view === "arcade" ? (
+          <ArcadeMap
+            events={filteredEvents}
+            selectedLocationId={selectedArcadeLocId}
+            onSelectLocation={handleSelectLocation}
+            onHoverHint={setMascotHint}
+          />
+        ) : (
+          <Suspense
+            fallback={
+              <div className="tamako-map-loading">
+                正在铺开和纸主题京都圣地地图もち…
+              </div>
+            }
+          >
+            <KyotoMap
+              events={filteredEvents}
+              selectedLocationId={selectedKyotoLocId}
+              onSelectLocation={handleSelectLocation}
+              onHoverHint={setMascotHint}
+            />
+          </Suspense>
+        )}
+
+        {/* Bottom-Left Dera Mascot & Story Tour Bar */}
+        <DeraTourDock
+          mascotHint={mascotHint}
+          activeIndex={activeIndexInFiltered}
+          totalFiltered={filteredEvents.length}
+          onPrev={() => stepTour(-1)}
+          onNext={() => stepTour(1)}
+          onOpenCurrentModal={openCurrentTourModal}
         />
 
-        <EpisodeGuide onSelectEpisodeOnly={handleFilterSingleEpisode} />
+        {/* Right Floating Location Inspector / Mobile Sheet */}
+        <MapSidebar
+          view={view}
+          location={activeLocation}
+          locationEvents={activeLocationEvents}
+          selectedEventId={selectedEventId}
+          hasFilters={activeFiltersFlag}
+          expanded={inspectorExpanded}
+          onToggleExpanded={setInspectorExpanded}
+          onSelectEvent={setSelectedEventId}
+          onOpenModal={setModalEventId}
+          onSwitchToLocation={(targetView, targetLocId) => {
+            setView(targetView);
+            if (targetView === "arcade") {
+              setSelectedArcadeLocId(targetLocId);
+            } else {
+              setSelectedKyotoLocId(targetLocId);
+            }
+            setInspectorExpanded(true);
+          }}
+          onFilterByCharacter={handleFilterSingleCharacter}
+          onResetFilters={handleResetFilters}
+        />
       </main>
 
-      <PilgrimageFooter />
+      {/* Navigation Drawers & Modals */}
+      <FilterDrawer
+        open={filterOpen}
+        tabFocus={filterTabFocus}
+        filter={filter}
+        matchedCount={filteredEvents.length}
+        totalCount={STORY_EVENTS.length}
+        episodeCounts={episodeCounts}
+        characterCounts={characterCounts}
+        onChangeTabFocus={setFilterTabFocus}
+        onChangeWork={handleChangeWork}
+        onToggleEpisode={handleToggleEpisode}
+        onToggleCharacter={handleToggleCharacter}
+        onChangeCharMatch={(charMatch: CharMatchMode) =>
+          setFilter((prev) => ({ ...prev, charMatch }))
+        }
+        onChangeQuery={(query: string) =>
+          setFilter((prev) => ({ ...prev, query }))
+        }
+        onReset={handleResetFilters}
+        onClose={() => setFilterOpen(false)}
+        onHoverHint={setMascotHint}
+      />
+
+      <EventDirectoryDrawer
+        open={directoryOpen}
+        events={filteredEvents}
+        activeView={view}
+        onLocateEvent={locateEventOnMap}
+        onOpenModal={(id) => {
+          setSelectedEventId(id);
+          setModalEventId(id);
+        }}
+        onResetFilters={handleResetFilters}
+        onClose={() => setDirectoryOpen(false)}
+      />
+
+      <ArchiveModal
+        open={archiveOpen}
+        onSelectEpisodeOnly={handleFilterSingleEpisode}
+        onClose={() => setArchiveOpen(false)}
+      />
 
       <EventModal
         event={modalEvent}

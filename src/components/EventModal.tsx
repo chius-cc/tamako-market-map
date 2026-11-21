@@ -83,7 +83,7 @@ export function EventModal({
             <h2
               id="tamako-modal-title"
               className="tamako-section-title"
-              style={{ fontSize: "clamp(1.2rem, 1rem + 1vw, 1.55rem)" }}
+              style={{ fontSize: "clamp(1.18rem, 1rem + 0.9vw, 1.5rem)" }}
             >
               <FloretIcon size={18} />
               <span>{event.titleZh}</span>
@@ -91,7 +91,7 @@ export function EventModal({
             <p
               style={{
                 margin: "4px 0 0",
-                fontSize: "0.85rem",
+                fontSize: "0.84rem",
                 color: "var(--tamako-ink-muted)",
                 fontWeight: 700,
               }}
@@ -111,6 +111,16 @@ export function EventModal({
           </button>
         </div>
 
+        {/* Large Authentic Anime Scene Still in Gold Mount */}
+        <div className="tamako-photo-mount tamako-modal-still">
+          <img
+            src={event.stillUrl}
+            alt={`${event.titleZh} 动画剧照`}
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+
         {(event.quoteJa || event.quoteZh) && (
           <div className="tamako-quote-box">
             {event.quoteJa && <p className="tamako-quote-ja">{event.quoteJa}</p>}
@@ -118,7 +128,7 @@ export function EventModal({
           </div>
         )}
 
-        <p className="tamako-prose" style={{ margin: "12px 0 16px" }}>
+        <p className="tamako-prose" style={{ margin: "12px 0 16px", maxWidth: "none" }}>
           {event.summaryZh}
         </p>
 
@@ -182,7 +192,7 @@ export function EventModal({
                   <button
                     key={cid}
                     type="button"
-                    className="tamako-char-chip"
+                    className="tamako-char-chip tamako-char-chip--avatar"
                     style={{
                       backgroundColor: ch.badgeBg,
                       color: ch.badgeInk,
@@ -193,6 +203,7 @@ export function EventModal({
                       onClose();
                     }}
                   >
+                    <img src={ch.avatarUrl} alt="" />
                     <span>{ch.nameZh}</span>
                   </button>
                 );
@@ -208,7 +219,7 @@ export function EventModal({
           )}
         </div>
 
-        <hr className="tamako-stitch-hr" style={{ margin: "18px 0" }} />
+        <hr className="tamako-stitch-hr" style={{ margin: "16px 0" }} />
 
         <div
           style={{
@@ -229,7 +240,7 @@ export function EventModal({
                   onClose();
                 }}
               >
-                在商店街图定位
+                🍡 在商店街定位
               </button>
             )}
             {kyotoLoc && (
@@ -241,7 +252,7 @@ export function EventModal({
                   onClose();
                 }}
               >
-                在京都地图定位
+                🗺️ 在京都地图定位
               </button>
             )}
             {kyotoLoc?.kyotoCoord && (
@@ -251,7 +262,7 @@ export function EventModal({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Google 地图打开
+                Google 地图
               </a>
             )}
           </div>

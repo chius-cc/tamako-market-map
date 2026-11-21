@@ -1,53 +1,58 @@
-import { useEffect, useRef, useState } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import { KYOTO_LOCATIONS } from "../data/locations";
-import { STORY_ROUTES } from "../data/routes";
-import { getLocationEvents } from "../lib/filter";
-import type { Location, SceneIconKind, StoryEvent } from "../types/tamako";
-import { getSceneIconSvgHtml } from "./Icons";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  AttributionControl,
+  Map as MapLibreMap,
+  Marker,
+  setWorkerUrl,
+} from "maplibre-gl";
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?url";
+import "maplibre-gl/dist/maplibre-gl.css";
 
-const REGIONS: {
-  id: string;
-  label: string;
-  center: [number, number];
-  zoom: number;
-}[] = [
-  { id: "all", label: "全览京都舞台", center: [34.996, 135.768], zoom: 12 },
+setWorkerUrl(maplibreWorkerUrl);
+import { KYOTO_LOCATIONS, LOCATION_MAP } from "../data/locations";
+import { STORY_ROUTES } from "../data/routes";
+import { TAMAKO_KYOTO_MAP_STYLE } from "../data/tamakoMapStyle";
+import { getLocationEvents } from "../lib/filter";
+import type { StoryEvent } from "../types/tamako";
+
+const AREA_PRESETS = [
+  {
+    id: "all",
+    label: "全览京都",
+    center: [135.7685, 34.998] as [number, number],
+    zoom: 12.1,
+  },
   {
     id: "demachi",
     label: "出町桝形 & 鸭川",
-    center: [35.0315, 135.7712],
-    zoom: 16,
+    center: [135.7709, 35.0306] as [number, number],
+    zoom: 15.6,
   },
   {
     id: "fujinomori",
-    label: "藤森站 & 兔山高校",
-    center: [34.9578, 135.7712],
-    zoom: 16,
+    label: "藤森 & 兔山高校",
+    center: [135.7712, 34.9579] as [number, number],
+    zoom: 15.6,
   },
   {
     id: "station",
     label: "JR 京都站",
-    center: [34.9858, 135.7588],
-    zoom: 15,
+    center: [135.7588, 34.9858] as [number, number],
+    zoom: 15.4,
   },
 ];
 
-function getKyotoIconKind(loc: Location): SceneIconKind {
-  switch (loc.kind) {
-    case "station":
-      return "train";
-    case "school":
-      return "baton";
-    case "shrine":
-      return "flower";
-    case "bath":
-    case "home":
-    case "shop":
-      return "mochi";
-    default:
-      return loc.id === "kyoto-delta" ? "camera" : "flower";
+function checkWebGLSupport(): boolean {
+  if (typeof window === "undefined" || typeof document === "undefined") return false;
+  try {
+    const canvas = document.createElement("canvas");
+    return Boolean(
+      canvas.getContext("webgl2") ||
+        canvas.getContext("webgl") ||
+        canvas.getContext("experimental-webgl")
+    );
+  } catch {
+    return false;
   }
 }
 
@@ -63,194 +68,377 @@ export function KyotoMap({
   onHoverHint: (hint: string) => void;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<L.Map | null>(null);
-  const markerLayerRef = useRef<L.LayerGroup | null>(null);
-  const routeLayerRef = useRef<L.LayerGroup | null>(null);
+  const mapRef = useRef<MapLibreMap | null>(null);
+  const markersRef = useRef<
+    Map<
+      string,
+      {
+        marker: Marker;
+        button: HTMLButtonElement;
+        badge: HTMLSpanElement;
+      }
+    >
+  >(new Map());
+
   const [showRoutes, setShowRoutes] = useState(true);
-  const [activeRegion, setActiveRegion] = useState("all");
+  const [activePreset, setActivePreset] = useState<string>("all");
+  const [webglReady] = useState<boolean>(() => checkWebGLSupport());
 
   const onSelectRef = useRef(onSelectLocation);
   const onHoverRef = useRef(onHoverHint);
   onSelectRef.current = onSelectLocation;
   onHoverRef.current = onHoverHint;
 
-  useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
+  const hitCountByLoc = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const loc of KYOTO_LOCATIONS) {
+      map[loc.id] = getLocationEvents(events, loc.id, "kyoto").length;
+    }
+    return map;
+  }, [events]);
 
-    const map = L.map(containerRef.current, {
-      center: [34.996, 135.768],
-      zoom: 12,
-      minZoom: 11,
+  const hitCountRef = useRef(hitCountByLoc);
+  hitCountRef.current = hitCountByLoc;
+
+  // Initialize custom Tamako-styled MapLibre vector map
+  useEffect(() => {
+    if (!webglReady || !containerRef.current || mapRef.current) return;
+
+    const map = new MapLibreMap({
+      container: containerRef.current,
+      style: TAMAKO_KYOTO_MAP_STYLE,
+      center: [135.7685, 34.998],
+      zoom: 12.1,
+      minZoom: 10,
       maxZoom: 18,
-      zoomControl: true,
+      attributionControl: false,
     });
 
-    L.tileLayer(
-      "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
-      {
-        attribution:
-          '地図タイル：<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener noreferrer">国土地理院（淡色地図）</a>',
-        minZoom: 5,
-        maxNativeZoom: 17,
-        maxZoom: 18,
-      }
-    ).addTo(map);
+    map.addControl(
+      new AttributionControl({
+        compact: true,
+        customAttribution: "Tamako Washi Map · © OpenFreeMap © OpenStreetMap",
+      }),
+      "bottom-right"
+    );
 
-    routeLayerRef.current = L.layerGroup().addTo(map);
-    markerLayerRef.current = L.layerGroup().addTo(map);
+    map.on("load", () => {
+      const features = STORY_ROUTES.map((route) => ({
+        type: "Feature" as const,
+        properties: {
+          id: route.id,
+          color: route.color,
+          nameZh: route.nameZh,
+        },
+        geometry: {
+          type: "LineString" as const,
+          // StoryRoute stores [lat, lng]; GeoJSON uses [lng, lat]
+          coordinates: route.path.map(([lat, lng]) => [lng, lat]),
+        },
+      }));
+
+      map.addSource("tamako-routes", {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features,
+        },
+      });
+
+      map.addLayer({
+        id: "tamako-routes-halo",
+        type: "line",
+        source: "tamako-routes",
+        layout: {
+          "line-cap": "round",
+          "line-join": "round",
+        },
+        paint: {
+          "line-color": "#FFFDF6",
+          "line-width": 6.5,
+          "line-opacity": 0.9,
+        },
+      });
+
+      map.addLayer({
+        id: "tamako-routes-line",
+        type: "line",
+        source: "tamako-routes",
+        layout: {
+          "line-cap": "round",
+          "line-join": "round",
+        },
+        paint: {
+          "line-color": ["get", "color"],
+          "line-width": 3.5,
+          "line-dasharray": [2.2, 1.8],
+        },
+      });
+    });
+
+    const store = markersRef.current;
+    for (const loc of KYOTO_LOCATIONS) {
+      const coord = loc.kyotoCoord!;
+      const wrap = document.createElement("div");
+      wrap.className = "tamako-kyoto-pin-wrap";
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = `tamako-kyoto-pin tamako-pin--${loc.tone}`;
+
+      const thumb = document.createElement("img");
+      thumb.className = "tamako-kyoto-pin-img";
+      thumb.src = loc.imageUrl;
+      thumb.alt = "";
+      thumb.loading = "eager";
+      thumb.decoding = "async";
+
+      const badge = document.createElement("span");
+      badge.className = "tamako-hotspot-badge";
+      badge.textContent = String(hitCountRef.current[loc.id] ?? 0);
+
+      const label = document.createElement("span");
+      label.className = "tamako-kyoto-pin-label";
+      label.textContent = loc.nameZh;
+
+      btn.appendChild(thumb);
+      btn.appendChild(badge);
+      btn.appendChild(label);
+      wrap.appendChild(btn);
+
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        onSelectRef.current(loc.id);
+      });
+
+      const announce = () => {
+        const count = hitCountRef.current[loc.id] ?? 0;
+        onHoverRef.current(
+          `${loc.nameZh}（${loc.realWorldRef}）· 当前有 ${count} 条剧情事件もち`
+        );
+      };
+      btn.addEventListener("mouseenter", announce);
+      btn.addEventListener("focus", announce);
+
+      const marker = new Marker({
+        element: wrap,
+        anchor: "center",
+      })
+        .setLngLat([coord.lng, coord.lat])
+        .addTo(map);
+
+      store.set(loc.id, { marker, button: btn, badge });
+    }
+
     mapRef.current = map;
 
-    const timer = window.setTimeout(() => {
-      map.invalidateSize();
-    }, 120);
+    const ro =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(() => map.resize())
+        : null;
+    if (ro && containerRef.current) {
+      ro.observe(containerRef.current);
+    }
 
     return () => {
-      window.clearTimeout(timer);
+      ro?.disconnect();
+      store.clear();
       map.remove();
       mapRef.current = null;
-      markerLayerRef.current = null;
-      routeLayerRef.current = null;
     };
-  }, []);
+  }, [webglReady]);
 
-  // 渲染巡礼动线
+  // Toggle GeoJSON pilgrimage route layers
   useEffect(() => {
-    const layer = routeLayerRef.current;
-    if (!layer) return;
-    layer.clearLayers();
-    if (!showRoutes) return;
-
-    for (const route of STORY_ROUTES) {
-      const line = L.polyline(route.path, {
-        color: route.color,
-        weight: 4,
-        opacity: 0.82,
-        dashArray: route.dashArray,
-      });
-      line.bindTooltip(`${route.nameZh}：${route.summaryZh}`, {
-        sticky: true,
-        className: "tamako-leaflet-tooltip",
-      });
-      line.addTo(layer);
+    const map = mapRef.current;
+    if (!map) return;
+    const vis = showRoutes ? "visible" : "none";
+    const apply = () => {
+      if (map.getLayer("tamako-routes-halo")) {
+        map.setLayoutProperty("tamako-routes-halo", "visibility", vis);
+      }
+      if (map.getLayer("tamako-routes-line")) {
+        map.setLayoutProperty("tamako-routes-line", "visibility", vis);
+      }
+    };
+    if (map.isStyleLoaded()) {
+      apply();
+    } else {
+      map.once("load", apply);
     }
   }, [showRoutes]);
 
-  // 渲染 15 个京都巡礼坐标圆章
+  // Sync pin badges, selected ring, and dimmed state
   useEffect(() => {
-    const layer = markerLayerRef.current;
-    if (!layer) return;
-    layer.clearLayers();
-
     for (const loc of KYOTO_LOCATIONS) {
-      const coord = loc.kyotoCoord!;
-      const hits = getLocationEvents(events, loc.id, "kyoto");
-      const isSelected = selectedLocationId === loc.id;
-      const dimmed = hits.length === 0 && !isSelected;
+      const entry = markersRef.current.get(loc.id);
+      if (!entry) continue;
+      const count = hitCountByLoc[loc.id] ?? 0;
+      const isSelected = loc.id === selectedLocationId;
+      const dimmed = count === 0 && !isSelected;
 
-      const html = `
-        <button
-          type="button"
-          class="tamako-kyoto-marker-btn tamako-pin--${loc.tone}${isSelected ? " is-selected" : ""}${dimmed ? " is-dimmed" : ""}"
-          aria-label="${loc.nameZh}（${hits.length} 条命中事件）"
-          aria-pressed="${isSelected}"
-        >
-          ${getSceneIconSvgHtml(getKyotoIconKind(loc))}
-          <span class="tamako-hotspot-badge">${hits.length}</span>
-        </button>
-      `;
-
-      const icon = L.divIcon({
-        className: "tamako-leaflet-div-icon",
-        html,
-        iconSize: [44, 44],
-        iconAnchor: [22, 22],
-      });
-
-      const marker = L.marker([coord.lat, coord.lng], {
-        icon,
-        zIndexOffset: isSelected ? 500 : hits.length > 0 ? 100 : 0,
-      });
-
-      marker.bindTooltip(`${loc.nameZh}（${hits.length} 幕）`, {
-        direction: "top",
-        offset: [0, -18],
-        className: "tamako-leaflet-tooltip",
-      });
-
-      marker.on("click", () => {
-        onSelectRef.current(loc.id);
-      });
-      marker.on("mouseover", () => {
-        onHoverRef.current(
-          `${loc.nameZh}（${loc.realWorldRef}）· 当前 ${hits.length} 条剧情事件もち`
-        );
-      });
-
-      marker.addTo(layer);
+      entry.badge.textContent = String(count);
+      entry.button.setAttribute(
+        "aria-label",
+        `${loc.nameZh}（${count} 条命中事件）`
+      );
+      entry.button.setAttribute("aria-pressed", String(isSelected));
+      entry.button.classList.toggle("is-selected", isSelected);
+      entry.button.classList.toggle("is-dimmed", dimmed);
+      const wrapper = entry.marker.getElement();
+      wrapper.style.zIndex = isSelected ? "36" : count > 0 ? "24" : "16";
     }
-  }, [events, selectedLocationId]);
+  }, [hitCountByLoc, selectedLocationId]);
 
-  // 选中地点改变时平滑定位
+  // Fly smoothly to newly selected Kyoto spot
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
-    const loc = KYOTO_LOCATIONS.find((l) => l.id === selectedLocationId);
-    if (!loc?.kyotoCoord) return;
-    const reduce =
+    const loc = LOCATION_MAP[selectedLocationId];
+    if (!map || !loc?.kyotoCoord) return;
+
+    const targetZoom = Math.max(map.getZoom(), 14.8);
+    const padRight =
+      typeof window !== "undefined" && window.innerWidth >= 961 ? 360 : 0;
+    const reduced =
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    const currentZoom = map.getZoom();
-    const targetZoom = currentZoom < 14 ? 15 : currentZoom;
-    map.setView([loc.kyotoCoord.lat, loc.kyotoCoord.lng], targetZoom, {
-      animate: !reduce,
-    });
+
+    if (reduced) {
+      map.jumpTo({
+        center: [loc.kyotoCoord.lng, loc.kyotoCoord.lat],
+        zoom: targetZoom,
+        padding: { top: 20, bottom: 20, left: 20, right: padRight },
+      });
+    } else {
+      map.flyTo({
+        center: [loc.kyotoCoord.lng, loc.kyotoCoord.lat],
+        zoom: targetZoom,
+        padding: { top: 20, bottom: 20, left: 20, right: padRight },
+        duration: 680,
+        essential: true,
+      });
+    }
   }, [selectedLocationId]);
 
-  const jumpToRegion = (region: (typeof REGIONS)[number]) => {
-    setActiveRegion(region.id);
+  const jumpToPreset = useCallback((preset: (typeof AREA_PRESETS)[number]) => {
+    setActivePreset(preset.id);
     const map = mapRef.current;
     if (!map) return;
-    const reduce =
+    const padRight =
+      typeof window !== "undefined" && window.innerWidth >= 961 ? 360 : 0;
+    const reduced =
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    map.setView(region.center, region.zoom, { animate: !reduce });
-  };
+    if (reduced) {
+      map.jumpTo({
+        center: preset.center,
+        zoom: preset.zoom,
+        padding: { top: 20, bottom: 20, left: 20, right: padRight },
+      });
+    } else {
+      map.flyTo({
+        center: preset.center,
+        zoom: preset.zoom,
+        padding: { top: 20, bottom: 20, left: 20, right: padRight },
+        duration: 650,
+        essential: true,
+      });
+    }
+  }, []);
+
+  const zoomStep = useCallback((delta: number) => {
+    const map = mapRef.current;
+    if (!map) return;
+    map.zoomTo(map.getZoom() + delta, { duration: 220 });
+  }, []);
 
   return (
-    <div className="tamako-map-stage">
-      <div className="tamako-kyoto-controls">
-        <div className="tamako-chip-row" role="group" aria-label="京都圣地片区快捷跳转">
-          {REGIONS.map((reg) => (
-            <button
-              key={reg.id}
-              type="button"
-              className="tamako-ep-chip"
-              aria-pressed={activeRegion === reg.id}
-              onClick={() => jumpToRegion(reg)}
-            >
-              {reg.label}
-            </button>
-          ))}
-        </div>
-
+    <div className="tamako-canvas-fill">
+      {/* Floating Kyoto Area Preset & Route HUD */}
+      <div className="tamako-map-hud-topcenter" role="toolbar" aria-label="京都巡礼片区快速跳转">
+        {AREA_PRESETS.map((preset) => (
+          <button
+            key={preset.id}
+            type="button"
+            className={`tamako-hud-chip${activePreset === preset.id ? " is-active" : ""}`}
+            onClick={() => jumpToPreset(preset)}
+          >
+            {preset.label}
+          </button>
+        ))}
         <button
           type="button"
-          className="tamako-ep-chip"
+          className={`tamako-hud-chip is-mint${showRoutes ? " is-active" : ""}`}
           aria-pressed={showRoutes}
-          onClick={() => setShowRoutes((prev) => !prev)}
+          onClick={() => setShowRoutes((v) => !v)}
         >
-          {showRoutes ? "隐藏剧情动线" : "显示剧情动线"}
+          {showRoutes ? "✓ 巡礼动线" : "显示动线"}
         </button>
       </div>
 
-      <div className="tamako-kyoto-wrap">
+      {/* Zoom Controls */}
+      <div className="tamako-map-zoom-dock" role="group" aria-label="地图缩放控制">
+        <button
+          type="button"
+          className="tamako-zoom-fab"
+          aria-label="放大京都地图"
+          onClick={() => zoomStep(1)}
+        >
+          ＋
+        </button>
+        <button
+          type="button"
+          className="tamako-zoom-fab"
+          aria-label="缩小京都地图"
+          onClick={() => zoomStep(-1)}
+        >
+          －
+        </button>
+      </div>
+
+      {webglReady ? (
         <div
           ref={containerRef}
-          className="tamako-kyoto-leaflet"
+          className="tamako-kyoto-maplibre"
           role="region"
-          aria-label="京都真实取景圣地地图"
+          aria-label="玉子市场主题京都圣地巡礼矢量地图"
         />
-      </div>
+      ) : (
+        /* Graceful Washi SVG schematic fallback when WebGL is unavailable */
+        <div
+          className="tamako-kyoto-fallback"
+          role="region"
+          aria-label="京都圣地巡礼手绘示意地图"
+        >
+          {KYOTO_LOCATIONS.map((loc) => {
+            const c = loc.kyotoCoord!;
+            const leftPct = ((c.lng - 135.752) / (135.779 - 135.752)) * 82 + 9;
+            const topPct = ((35.041 - c.lat) / (35.041 - 34.952)) * 80 + 10;
+            const hits = hitCountByLoc[loc.id] ?? 0;
+            const isSelected = loc.id === selectedLocationId;
+            return (
+              <button
+                key={loc.id}
+                type="button"
+                className={`tamako-kyoto-pin tamako-pin--${loc.tone}${
+                  isSelected ? " is-selected" : ""
+                }`}
+                style={{
+                  position: "absolute",
+                  left: `${leftPct}%`,
+                  top: `${topPct}%`,
+                  transform: "translate(-50%, -50%)",
+                }}
+                onClick={() => onSelectLocation(loc.id)}
+              >
+                <img className="tamako-kyoto-pin-img" src={loc.imageUrl} alt="" />
+                <span className="tamako-hotspot-badge">{hits}</span>
+                <span className="tamako-kyoto-pin-label">{loc.nameZh}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
