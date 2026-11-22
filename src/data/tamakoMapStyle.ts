@@ -1,11 +1,42 @@
 import type { ExpressionSpecification, StyleSpecification } from "maplibre-gl";
+import type { Locale } from "../types/tamako";
 
-const JP_NAME_EXPR: ExpressionSpecification = [
-  "coalesce",
-  ["get", "name:ja"],
-  ["get", "name:nonlatin"],
-  ["get", "name"],
-];
+export function getMapLabelExpression(locale: Locale): ExpressionSpecification {
+  if (locale === "en") {
+    return [
+      "coalesce",
+      ["get", "name:en"],
+      ["get", "name_en"],
+      ["get", "name:latin"],
+      ["get", "name"],
+    ];
+  }
+  if (locale === "zh") {
+    return [
+      "coalesce",
+      ["get", "name:zh"],
+      ["get", "name:ja"],
+      ["get", "name:nonlatin"],
+      ["get", "name"],
+    ];
+  }
+  return [
+    "coalesce",
+    ["get", "name:ja"],
+    ["get", "name:nonlatin"],
+    ["get", "name"],
+  ];
+}
+
+export const LOCALIZED_SYMBOL_LAYER_IDS = [
+  "waterway-label",
+  "road-label",
+  "poi-station-label",
+  "place-suburb-label",
+  "place-city-label",
+] as const;
+
+const JP_NAME_EXPR: ExpressionSpecification = getMapLabelExpression("ja");
 
 /**
  * Custom Tamako Market (`tamako-web`) vector map style for Kyoto.

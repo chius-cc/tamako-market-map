@@ -2,23 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import { CHARACTER_MAP } from "../data/characters";
 import { EPISODE_MAP, EPISODES } from "../data/episodes";
 import { LOCATION_MAP } from "../data/locations";
+import { useI18n } from "../i18n";
 import { getPreferredViewForEvent } from "../lib/filter";
-import type { MapViewMode, StoryEvent } from "../types/tamako";
+import type { LocationArea, MapViewMode, StoryEvent } from "../types/tamako";
 import { FloretIcon, SceneIcon } from "./Icons";
 
 type GroupMode = "episode" | "area";
 
-const AREA_ORDER = [
-  { id: "arcade", label: "兔山商店街内部" },
-  { id: "demachi", label: "出町桝形与出町双叶片区" },
-  { id: "kamogawa", label: "鸭川三角洲与下鸭神社片区" },
-  { id: "fujinomori", label: "京阪藤森与兔山高校片区" },
-  { id: "central", label: "JR 京都站与市中心片区" },
+const AREA_IDS: LocationArea[] = [
+  "arcade",
+  "demachi",
+  "kamogawa",
+  "fujinomori",
+  "central",
 ];
 
 export function EventDirectoryDrawer({
   open,
   events,
+  totalCount,
   activeView,
   onLocateEvent,
   onOpenModal,
@@ -27,12 +29,14 @@ export function EventDirectoryDrawer({
 }: {
   open: boolean;
   events: StoryEvent[];
+  totalCount: number;
   activeView: MapViewMode;
   onLocateEvent: (view: MapViewMode, locationId: string, eventId: string) => void;
   onOpenModal: (eventId: string) => void;
   onResetFilters: () => void;
   onClose: () => void;
 }) {
+  const { ui, tEp, tChar, tLoc, tEvent } = useI18n();
   const [groupMode, setGroupMode] = useState<GroupMode>("episode");
   const closeRef = useRef<HTMLButtonElement | null>(null);
 
@@ -59,16 +63,19 @@ export function EventDirectoryDrawer({
     for (const ep of EPISODES) {
       const items = events.filter((e) => e.episodeId === ep.id);
       if (items.length > 0) {
+        const epText = tEp(ep);
         groups.push({
           key: ep.id,
-          title: `${ep.shortLabel} · ${ep.titleZh}`,
-          subtitle: `${ep.titleJa}（${ep.seasonLabel}）`,
+          title: `${epText.shortLabel} · ${epText.title}`,
+          subtitle: epText.secondaryTitle
+            ? `${epText.secondaryTitle} (${epText.seasonLabel})`
+            : epText.seasonLabel,
           items,
         });
       }
     }
   } else {
-    for (const area of AREA_ORDER) {
+    for (const areaId of AREA_IDS) {
       const items = events.filter((e) => {
         const primaryLoc = e.arcadeLocationId
           ? LOCATION_MAP[e.arcadeLocationId]
@@ -76,18 +83,18 @@ export function EventDirectoryDrawer({
             ? LOCATION_MAP[e.kyotoLocationId]
             : undefined;
         if (!primaryLoc) return false;
-        if (area.id === "arcade") {
+        if (areaId === "arcade") {
           return primaryLoc.area === "arcade";
         }
         const kyotoLoc = e.kyotoLocationId
           ? LOCATION_MAP[e.kyotoLocationId]
           : undefined;
-        return kyotoLoc?.area === area.id && !e.arcadeLocationId;
+        return kyotoLoc?.area === areaId && !e.arcadeLocationId;
       });
       if (items.length > 0) {
         groups.push({
-          key: area.id,
-          title: area.label,
+          key: areaId,
+          title: ui.areaGroupLabels[areaId],
           items,
         });
       }
@@ -112,11 +119,9 @@ export function EventDirectoryDrawer({
           <div>
             <h2 id="tamako-directory-title" className="tamako-section-title">
               <FloretIcon size={18} />
-              <span>剧照事件手账（共 {events.length} 幕）</span>
+              <span>{ui.dirTitle(events.length)}</span>
             </h2>
-            <p className="tamako-drawer-sub">
-              按时间线或圣地片区浏览动画剧照，点击「在地图定位」可直接飞往对应坐标。
-            </p>
+            <p className="tamako-drawer-sub">{ui.dirSub}</p>
           </div>
 
           <div className="tamako-chip-row">
@@ -126,7 +131,7 @@ export function EventDirectoryDrawer({
               aria-pressed={groupMode === "episode"}
               onClick={() => setGroupMode("episode")}
             >
-              按集数时间序
+              {ui.dirGroupEpisode}
             </button>
             <button
               type="button"
@@ -134,13 +139,13 @@ export function EventDirectoryDrawer({
               aria-pressed={groupMode === "area"}
               onClick={() => setGroupMode("area")}
             >
-              按圣地片区
+              {ui.dirGroupArea}
             </button>
             <button
               ref={closeRef}
               type="button"
               className="tamako-modal-close"
-              aria-label="关闭事件手账"
+              aria-label={ui.dirCloseAria}
               onClick={onClose}
             >
               ×
@@ -149,16 +154,19 @@ export function EventDirectoryDrawer({
         </div>
 
         {events.length === 0 ? (
-          <div className="tamako-sidebar-empty" style={{ textAlign: "center", padding: 28 }}>
+          <div
+            className="tamako-sidebar-empty"
+            style={{ textAlign: "center", padding: 28 }}
+          >
             <p style={{ margin: "0 0 12px", fontWeight: 700 }}>
-              没有找到符合当前筛选条件的剧情事件。试试放宽角色或清空关键词吧！
+              {ui.dirEmptyText}
             </p>
             <button
               type="button"
               className="tamako-pill-btn is-primary"
               onClick={onResetFilters}
             >
-              显示全部 43 幕事件
+              {ui.dirShowAllBtn(totalCount)}
             </button>
           </div>
         ) : (
@@ -170,7 +178,12 @@ export function EventDirectoryDrawer({
                   <span>{grp.title}</span>
                 </h3>
                 {grp.subtitle && (
-                  <span style={{ fontSize: "0.8rem", color: "var(--tamako-ink-muted)" }}>
+                  <span
+                    style={{
+                      fontSize: "0.8rem",
+                      color: "var(--tamako-ink-muted)",
+                    }}
+                  >
                     {grp.subtitle}
                   </span>
                 )}
@@ -179,20 +192,20 @@ export function EventDirectoryDrawer({
               <div className="tamako-event-grid">
                 {grp.items.map((ev) => {
                   const ep = EPISODE_MAP[ev.episodeId];
-                  const locName =
-                    (ev.arcadeLocationId && LOCATION_MAP[ev.arcadeLocationId]?.nameZh) ||
-                    (ev.kyotoLocationId && LOCATION_MAP[ev.kyotoLocationId]?.nameZh) ||
-                    "";
+                  const evText = tEvent(ev);
+                  const primaryLoc =
+                    (ev.arcadeLocationId && LOCATION_MAP[ev.arcadeLocationId]) ||
+                    (ev.kyotoLocationId && LOCATION_MAP[ev.kyotoLocationId]);
+                  const locName = primaryLoc ? tLoc(primaryLoc).name : "";
                   const pref = getPreferredViewForEvent(ev, activeView);
 
                   return (
                     <article key={ev.id} className="tamako-event-card">
                       <div>
-                        {/* Real 16:9 Anime Scene Still in Gold Mount */}
                         <div className="tamako-photo-mount tamako-event-card-still">
                           <img
                             src={ev.stillUrl}
-                            alt={`${ev.titleZh} 剧照`}
+                            alt={ui.modalStillAlt(evText.title)}
                             loading="lazy"
                             decoding="async"
                           />
@@ -201,15 +214,21 @@ export function EventDirectoryDrawer({
                         <div className="tamako-event-card-top" style={{ marginTop: 10 }}>
                           <span className={`tamako-scene-tag tone-${ev.tone}`}>
                             <SceneIcon kind={ev.icon} size={12} />
-                            <span>{ep?.shortLabel ?? ev.sceneBadge}</span>
+                            <span>{ep ? tEp(ep).shortLabel : evText.sceneBadge}</span>
                           </span>
-                          <span style={{ fontSize: "0.75rem", color: "var(--tamako-ink-muted)", fontWeight: 700 }}>
-                            {ev.seasonTime}
+                          <span
+                            style={{
+                              fontSize: "0.75rem",
+                              color: "var(--tamako-ink-muted)",
+                              fontWeight: 700,
+                            }}
+                          >
+                            {evText.seasonTime}
                           </span>
                         </div>
 
                         <h4 className="tamako-event-title" style={{ marginTop: 8 }}>
-                          {ev.titleZh}
+                          {evText.title}
                         </h4>
                         <p
                           style={{
@@ -219,9 +238,10 @@ export function EventDirectoryDrawer({
                             fontWeight: 700,
                           }}
                         >
-                          舞台：{locName}
+                          {ui.dirStagePrefix}
+                          {locName}
                         </p>
-                        <p className="tamako-event-summary">{ev.summaryZh}</p>
+                        <p className="tamako-event-summary">{evText.summary}</p>
                       </div>
 
                       <div>
@@ -240,7 +260,7 @@ export function EventDirectoryDrawer({
                                 }}
                               >
                                 <img src={ch.avatarUrl} alt="" />
-                                <span>{ch.nameZh}</span>
+                                <span>{tChar(ch).name}</span>
                               </span>
                             );
                           })}
@@ -251,22 +271,30 @@ export function EventDirectoryDrawer({
                             <button
                               type="button"
                               className="tamako-pill-btn is-custard"
-                              style={{ minHeight: 34, padding: "4px 12px", fontSize: "0.8rem" }}
+                              style={{
+                                minHeight: 34,
+                                padding: "4px 12px",
+                                fontSize: "0.8rem",
+                              }}
                               onClick={() => {
                                 onLocateEvent(pref.view, pref.locationId!, ev.id);
                                 onClose();
                               }}
                             >
-                              📍 在地图定位
+                              {ui.dirLocateBtn}
                             </button>
                           )}
                           <button
                             type="button"
                             className="tamako-pill-btn is-primary"
-                            style={{ minHeight: 34, padding: "4px 12px", fontSize: "0.8rem" }}
+                            style={{
+                              minHeight: 34,
+                              padding: "4px 12px",
+                              fontSize: "0.8rem",
+                            }}
                             onClick={() => onOpenModal(ev.id)}
                           >
-                            剧照与台词
+                            {ui.dirDetailBtn}
                           </button>
                         </div>
                       </div>

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ARCADE_LOCATIONS } from "../data/locations";
+import { useI18n } from "../i18n";
 import { getLocationEvents } from "../lib/filter";
 import type { StoryEvent } from "../types/tamako";
 
@@ -153,6 +154,7 @@ export function ArcadeMap({
   onSelectLocation: (locId: string) => void;
   onHoverHint: (hint: string) => void;
 }) {
+  const { ui, tLoc } = useI18n();
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const [transform, setTransform] = useState({ scale: 0.68, x: 120, y: 16 });
   const dragRef = useRef<{
@@ -225,21 +227,19 @@ export function ArcadeMap({
   return (
     <div className="tamako-canvas-fill">
       {/* Floating Legend & Reset Pill */}
-      <div className="tamako-map-hud-topcenter" aria-label="商店街地图导览">
-        <span className="tamako-hud-static-tag">
-          🍡 手绘兔山商店街 · 滚轮/双指缩放 · 点击剧照圆章查看剧情
-        </span>
+      <div className="tamako-map-hud-topcenter" aria-label={ui.arcadeToolbarAria}>
+        <span className="tamako-hud-static-tag">{ui.arcadeGuideTag}</span>
         <button type="button" className="tamako-hud-chip" onClick={fitMap}>
-          适应全街
+          {ui.arcadeFitBtn}
         </button>
       </div>
 
       {/* Zoom Controls */}
-      <div className="tamako-map-zoom-dock" role="group" aria-label="商店街缩放控制">
+      <div className="tamako-map-zoom-dock" role="group" aria-label={ui.arcadeZoomGroupAria}>
         <button
           type="button"
           className="tamako-zoom-fab"
-          aria-label="放大商店街地图"
+          aria-label={ui.arcadeZoomInAria}
           onClick={() => zoomAt(1.22)}
         >
           ＋
@@ -247,7 +247,7 @@ export function ArcadeMap({
         <button
           type="button"
           className="tamako-zoom-fab"
-          aria-label="缩小商店街地图"
+          aria-label={ui.arcadeZoomOutAria}
           onClick={() => zoomAt(0.82)}
         >
           －
@@ -258,7 +258,7 @@ export function ArcadeMap({
         ref={viewportRef}
         className="tamako-arcade-viewport"
         role="region"
-        aria-label="兔山商店街手绘风交互式平面地图"
+        aria-label={ui.arcadeRegionAria}
         onPointerDown={(e) => {
           if ((e.target as HTMLElement).closest("button")) return;
           dragRef.current = {
@@ -488,8 +488,8 @@ export function ArcadeMap({
                 まっぷ
               </text>
 
-              <text x="86" y="106" fill="#8A5A36" fontSize="12.5" fontWeight="700">
-                出町桝形原型 · 街坊头像与剧照全收录
+              <text x="86" y="106" fill="#8A5A36" fontSize="11.5" fontWeight="700">
+                {ui.arcadeBoardSub}
               </text>
             </g>
 
@@ -776,12 +776,12 @@ export function ArcadeMap({
               </text>
             </g>
 
-            {/* Center Info Note Box (inspired by official bg.png legend box, repurposed as Arcade Landmark Guide) */}
+            {/* Center Info Note Box */}
             <g transform="translate(534, 316)">
               <rect
                 x="0"
                 y="0"
-                width="206"
+                width="216"
                 height="108"
                 rx="18"
                 fill="#FAF4E0"
@@ -790,17 +790,17 @@ export function ArcadeMap({
                 strokeWidth="1.8"
                 strokeDasharray="6 4"
               />
-              <text x="18" y="30" fill="#993338" fontSize="13.5" fontWeight="900">
-                ✦ 街坊手账导览
+              <text x="16" y="30" fill="#993338" fontSize="13" fontWeight="900">
+                {ui.arcadeLegendTitle}
               </text>
-              <text x="18" y="54" fill="#8E4C28" fontSize="12" fontWeight="700">
-                · 圆框肖像：各店看板店主
+              <text x="16" y="54" fill="#8E4C28" fontSize="11.5" fontWeight="700">
+                {ui.arcadeLegendLine1}
               </text>
-              <text x="18" y="76" fill="#8E4C28" fontSize="12" fontWeight="700">
-                · 金框剧照章：点击看该店剧情
+              <text x="16" y="76" fill="#8E4C28" fontSize="11.5" fontWeight="700">
+                {ui.arcadeLegendLine2}
               </text>
-              <text x="18" y="96" fill="#BF3B5E" fontSize="11.5" fontWeight="800">
-                · 东支路二楼：玉子 ↔ 饼藏糸電話
+              <text x="16" y="96" fill="#BF3B5E" fontSize="11.2" fontWeight="800">
+                {ui.arcadeLegendLine3}
               </text>
             </g>
 
@@ -1041,10 +1041,10 @@ export function ArcadeMap({
                 y="78"
                 textAnchor="middle"
                 fill="#8A5A36"
-                fontSize="11.5"
+                fontSize="11"
                 fontWeight="900"
               >
-                北（出町口）
+                {ui.arcadeCompassNorth}
               </text>
             </g>
           </svg>
@@ -1055,6 +1055,7 @@ export function ArcadeMap({
             const hits = getLocationEvents(events, loc.id, "arcade");
             const isSelected = selectedLocationId === loc.id;
             const dimmed = hits.length === 0 && !isSelected;
+            const locText = tLoc(loc);
 
             return (
               <button
@@ -1067,17 +1068,17 @@ export function ArcadeMap({
                   left: `${(coord.x / CANVAS_W) * 100}%`,
                   top: `${(coord.y / CANVAS_H) * 100}%`,
                 }}
-                aria-label={`${loc.nameZh}（${hits.length} 条命中事件）`}
+                aria-label={ui.arcadePinAria(locText.name, hits.length)}
                 aria-pressed={isSelected}
                 onClick={() => onSelectLocation(loc.id)}
                 onMouseEnter={() =>
                   onHoverHint(
-                    `${loc.nameZh}（${loc.subtitle}）· 当前有 ${hits.length} 条剧情事件もち`
+                    ui.hintHoverArcadeLoc(locText.name, locText.subtitle, hits.length)
                   )
                 }
                 onFocus={() =>
                   onHoverHint(
-                    `${loc.nameZh}（${loc.subtitle}）· 当前有 ${hits.length} 条剧情事件もち`
+                    ui.hintHoverArcadeLoc(locText.name, locText.subtitle, hits.length)
                   )
                 }
               >

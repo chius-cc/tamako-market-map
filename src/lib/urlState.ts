@@ -1,17 +1,25 @@
 import { CHARACTER_MAP } from "../data/characters";
 import { EPISODE_MAP } from "../data/episodes";
 import { STORY_EVENT_MAP } from "../data/events";
-import type { FilterState, MapViewMode, WorkKind } from "../types/tamako";
+import type { FilterState, Locale, MapViewMode, WorkKind } from "../types/tamako";
 import { DEFAULT_FILTER_STATE } from "./filter";
 
 export interface UrlSyncState {
+  lang: Locale | null;
   view: MapViewMode;
   filter: FilterState;
   eventId: string | null;
 }
 
+export function isValidLocale(raw: string | null | undefined): raw is Locale {
+  return raw === "zh" || raw === "en" || raw === "ja";
+}
+
 export function parseUrlState(search: string): UrlSyncState {
   const params = new URLSearchParams(search);
+  const rawLang = params.get("lang");
+  const lang: Locale | null = isValidLocale(rawLang) ? rawLang : null;
+
   const rawView = params.get("view");
   const view: MapViewMode = rawView === "kyoto" ? "kyoto" : "arcade";
 
@@ -40,6 +48,7 @@ export function parseUrlState(search: string): UrlSyncState {
   const eventId = rawEvent && STORY_EVENT_MAP[rawEvent] ? rawEvent : null;
 
   return {
+    lang,
     view,
     filter: {
       work,
@@ -52,8 +61,13 @@ export function parseUrlState(search: string): UrlSyncState {
   };
 }
 
-export function serializeUrlState(state: UrlSyncState): string {
+export function serializeUrlState(
+  state: Omit<UrlSyncState, "lang"> & { lang?: Locale }
+): string {
   const params = new URLSearchParams();
+  if (state.lang && state.lang !== "zh") {
+    params.set("lang", state.lang);
+  }
   if (state.view !== "arcade") {
     params.set("view", state.view);
   }

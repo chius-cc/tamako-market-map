@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { CHARACTER_MAP } from "../data/characters";
 import { EPISODE_MAP } from "../data/episodes";
 import { LOCATION_MAP } from "../data/locations";
+import { useI18n } from "../i18n";
 import type { MapViewMode, StoryEvent } from "../types/tamako";
 import { FloretIcon, SceneIcon } from "./Icons";
 
@@ -26,6 +27,7 @@ export function EventModal({
   onFilterByCharacter: (charId: string) => void;
   onFilterByEpisode: (episodeId: string) => void;
 }) {
+  const { ui, tEp, tChar, tLoc, tEvent } = useI18n();
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
@@ -47,7 +49,9 @@ export function EventModal({
 
   if (!event) return null;
 
+  const evText = tEvent(event);
   const ep = EPISODE_MAP[event.episodeId];
+  const epText = ep ? tEp(ep) : undefined;
   const arcadeLoc = event.arcadeLocationId
     ? LOCATION_MAP[event.arcadeLocationId]
     : undefined;
@@ -74,10 +78,13 @@ export function EventModal({
             <div className="tamako-chip-row" style={{ marginBottom: 8 }}>
               <span className={`tamako-scene-tag tone-${event.tone}`}>
                 <SceneIcon kind={event.icon} size={14} />
-                <span>{event.sceneBadge}</span>
+                <span>{evText.sceneBadge}</span>
               </span>
-              <span className="tamako-stat-pill is-sakura" style={{ padding: "3px 10px" }}>
-                {event.seasonTime}
+              <span
+                className="tamako-stat-pill is-sakura"
+                style={{ padding: "3px 10px" }}
+              >
+                {evText.seasonTime}
               </span>
             </div>
             <h2
@@ -86,58 +93,66 @@ export function EventModal({
               style={{ fontSize: "clamp(1.18rem, 1rem + 0.9vw, 1.5rem)" }}
             >
               <FloretIcon size={18} />
-              <span>{event.titleZh}</span>
+              <span>{evText.title}</span>
             </h2>
-            <p
-              style={{
-                margin: "4px 0 0",
-                fontSize: "0.84rem",
-                color: "var(--tamako-ink-muted)",
-                fontWeight: 700,
-              }}
-            >
-              {event.titleJa}
-            </p>
+            {evText.secondaryTitle && (
+              <p
+                style={{
+                  margin: "4px 0 0",
+                  fontSize: "0.84rem",
+                  color: "var(--tamako-ink-muted)",
+                  fontWeight: 700,
+                }}
+              >
+                {evText.secondaryTitle}
+              </p>
+            )}
           </div>
 
           <button
             ref={closeBtnRef}
             type="button"
             className="tamako-modal-close"
-            aria-label="关闭剧情详情弹卡"
+            aria-label={ui.modalCloseAria}
             onClick={onClose}
           >
             ×
           </button>
         </div>
 
-        {/* Large Authentic Anime Scene Still in Gold Mount */}
         <div className="tamako-photo-mount tamako-modal-still">
           <img
             src={event.stillUrl}
-            alt={`${event.titleZh} 动画剧照`}
+            alt={ui.modalStillAlt(evText.title)}
             loading="eager"
             decoding="async"
           />
         </div>
 
-        {(event.quoteJa || event.quoteZh) && (
+        {(evText.quotePrimary || evText.quoteSecondary) && (
           <div className="tamako-quote-box">
-            {event.quoteJa && <p className="tamako-quote-ja">{event.quoteJa}</p>}
-            {event.quoteZh && <p className="tamako-quote-zh">{event.quoteZh}</p>}
+            {evText.quotePrimary && (
+              <p className="tamako-quote-ja">{evText.quotePrimary}</p>
+            )}
+            {evText.quoteSecondary && (
+              <p className="tamako-quote-zh">{evText.quoteSecondary}</p>
+            )}
           </div>
         )}
 
-        <p className="tamako-prose" style={{ margin: "12px 0 16px", maxWidth: "none" }}>
-          {event.summaryZh}
+        <p
+          className="tamako-prose"
+          style={{ margin: "12px 0 16px", maxWidth: "none" }}
+        >
+          {evText.summary}
         </p>
 
         <dl className="tamako-chart">
           <div className="tamako-chart-row">
-            <dt>所属作品 / 集数</dt>
+            <dt>{ui.modalWorkLabel}</dt>
             <dd>
               <span>
-                {ep ? `${ep.shortLabel}《${ep.titleZh}》` : event.episodeId}
+                {epText ? `${epText.shortLabel} · ${epText.title}` : event.episodeId}
               </span>
               {ep && (
                 <button
@@ -149,41 +164,40 @@ export function EventModal({
                     onClose();
                   }}
                 >
-                  只看本话
+                  {ui.modalOnlyThisEp}
                 </button>
               )}
             </dd>
           </div>
 
           <div className="tamako-chart-row">
-            <dt>发生舞台与圣地</dt>
+            <dt>{ui.modalStageLabel}</dt>
             <dd>
               {arcadeLoc && (
                 <span>
-                  商店街：<strong>{arcadeLoc.nameZh}</strong>
+                  {ui.modalArcadePrefix}
+                  <strong>{tLoc(arcadeLoc).name}</strong>
                 </span>
               )}
               {arcadeLoc && kyotoLoc && <span> · </span>}
               {kyotoLoc && (
                 <span>
-                  京都：<strong>{kyotoLoc.nameZh}</strong>
+                  {ui.modalKyotoPrefix}
+                  <strong>{tLoc(kyotoLoc).name}</strong>
                 </span>
               )}
             </dd>
           </div>
 
-          {ep && (
+          {epText && (
             <div className="tamako-chart-row">
-              <dt>核心主创</dt>
-              <dd>
-                脚本：{ep.staff.script} ／ 分镜：{ep.staff.storyboard} ／ 演出：
-                {ep.staff.director} ／ 作画监督：{ep.staff.animationDirector}
-              </dd>
+              <dt>{ui.modalStaffLabel}</dt>
+              <dd>{ui.modalStaffFormat(epText.staff)}</dd>
             </div>
           )}
 
           <div className="tamako-chart-row">
-            <dt>登场人物（点击快筛）</dt>
+            <dt>{ui.modalCharsLabel}</dt>
             <dd>
               {event.characterIds.map((cid) => {
                 const ch = CHARACTER_MAP[cid];
@@ -204,7 +218,7 @@ export function EventModal({
                     }}
                   >
                     <img src={ch.avatarUrl} alt="" />
-                    <span>{ch.nameZh}</span>
+                    <span>{tChar(ch).name}</span>
                   </button>
                 );
               })}
@@ -213,9 +227,15 @@ export function EventModal({
         </dl>
 
         <div className="tamako-staff-reply">
-          <div>手账批注：{event.staffNoteZh}</div>
-          {event.pilgrimageTipZh && (
-            <div style={{ marginTop: 6 }}>圣地巡礼小贴士：{event.pilgrimageTipZh}</div>
+          <div>
+            {ui.modalStaffNotePrefix}
+            {evText.staffNote}
+          </div>
+          {evText.pilgrimageTip && (
+            <div style={{ marginTop: 6 }}>
+              {ui.modalPilgrimageTipPrefix}
+              {evText.pilgrimageTip}
+            </div>
           )}
         </div>
 
@@ -240,7 +260,7 @@ export function EventModal({
                   onClose();
                 }}
               >
-                🍡 在商店街定位
+                {ui.modalLocateArcade}
               </button>
             )}
             {kyotoLoc && (
@@ -252,7 +272,7 @@ export function EventModal({
                   onClose();
                 }}
               >
-                🗺️ 在京都地图定位
+                {ui.modalLocateKyoto}
               </button>
             )}
             {kyotoLoc?.kyotoCoord && (
@@ -262,7 +282,7 @@ export function EventModal({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Google 地图
+                {ui.googleMapsBtn}
               </a>
             )}
           </div>
@@ -274,7 +294,7 @@ export function EventModal({
               disabled={!canPrev}
               onClick={onPrev}
             >
-              ← 上一幕
+              {ui.prevScene}
             </button>
             <button
               type="button"
@@ -282,7 +302,7 @@ export function EventModal({
               disabled={!canNext}
               onClick={onNext}
             >
-              下一幕 →
+              {ui.nextScene}
             </button>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { CHARACTER_MAP } from "../data/characters";
 import { EPISODE_MAP } from "../data/episodes";
 import { LOCATION_MAP } from "../data/locations";
+import { useI18n } from "../i18n";
 import type { Location, MapViewMode, StoryEvent } from "../types/tamako";
 import { FloretIcon, SceneIcon } from "./Icons";
 
@@ -31,9 +32,12 @@ export function MapSidebar({
   onFilterByCharacter: (charId: string) => void;
   onResetFilters: () => void;
 }) {
+  const { ui, tLoc, tChar, tEp, tEvent } = useI18n();
+
   if (!location) return null;
 
-  // Collapsed pill state so user can inspect unobstructed map on desktop or mobile
+  const locText = tLoc(location);
+
   if (!expanded) {
     return (
       <div className="tamako-inspector-collapsed">
@@ -48,8 +52,8 @@ export function MapSidebar({
             alt=""
           />
           <span className="tamako-inspector-reopen-text">
-            <strong>{location.nameZh}</strong>
-            <small>{locationEvents.length} 幕相关剧情 · 点击展开 ▲</small>
+            <strong>{locText.name}</strong>
+            <small>{ui.inspectorReopenSub(locationEvents.length)}</small>
           </span>
         </button>
       </div>
@@ -70,60 +74,65 @@ export function MapSidebar({
   return (
     <aside
       className="tamako-inspector tamako-scrollbox"
-      aria-label="当前选中地标与剧照事件列表"
+      aria-label={ui.inspectorAria}
     >
       <div className="tamako-inspector-top">
         <span className={`tamako-scene-tag tone-${location.tone}`}>
           <FloretIcon size={12} />
-          <span>{location.areaLabel}</span>
+          <span>{locText.areaLabel}</span>
         </span>
 
         <button
           type="button"
           className="tamako-inspector-close"
-          aria-label="收起地标详情面板"
+          aria-label={ui.inspectorCloseAria}
           onClick={() => onToggleExpanded(false)}
         >
-          收起 ×
+          {ui.inspectorCloseBtn}
         </button>
       </div>
 
-      {/* Real Anime Storefront / Landmark Still in Gold Mount */}
       <div className="tamako-photo-mount tamako-inspector-hero">
         <img
           src={location.imageUrl}
-          alt={`${location.nameZh} 动画剧照`}
+          alt={ui.inspectorStillAlt(locText.name)}
           loading="eager"
           decoding="async"
         />
       </div>
 
       <div className="tamako-sidebar-loc-head">
-        <h2 className="tamako-sidebar-loc-title">{location.nameZh}</h2>
+        <h2 className="tamako-sidebar-loc-title">{locText.name}</h2>
         <p className="tamako-sidebar-loc-ja">
-          {location.nameJa} · {location.subtitle}
+          {locText.secondaryName ? `${locText.secondaryName} · ` : ""}
+          {locText.subtitle}
         </p>
       </div>
 
-      {/* Associated Shopkeeper / Character Avatars */}
       {owners.length > 0 && (
-        <div className="tamako-inspector-owners" aria-label="关联人物快筛">
-          {owners.map((ch) => (
-            <button
-              key={ch.id}
-              type="button"
-              className="tamako-owner-chip"
-              title={`只看「${ch.nameZh}」相关剧情`}
-              onClick={() => onFilterByCharacter(ch.id)}
-            >
-              <img src={ch.avatarUrl} alt="" />
-              <span>{ch.nameZh}</span>
-            </button>
-          ))}
+        <div
+          className="tamako-inspector-owners"
+          aria-label={ui.inspectorOwnersAria}
+        >
+          {owners.map((ch) => {
+            const chText = tChar(ch);
+            return (
+              <button
+                key={ch.id}
+                type="button"
+                className="tamako-owner-chip"
+                title={ui.inspectorOwnerTitle(chText.name)}
+                onClick={() => onFilterByCharacter(ch.id)}
+              >
+                <img src={ch.avatarUrl} alt="" />
+                <span>{chText.name}</span>
+              </button>
+            );
+          })}
         </div>
       )}
 
-      <p className="tamako-sidebar-loc-desc">{location.descriptionZh}</p>
+      <p className="tamako-sidebar-loc-desc">{locText.description}</p>
 
       <div className="tamako-inspector-links">
         {view === "kyoto" && linkedArcade && (
@@ -133,7 +142,7 @@ export function MapSidebar({
             style={{ minHeight: 34, padding: "4px 12px", fontSize: "0.8rem" }}
             onClick={() => onSwitchToLocation("arcade", linkedArcade.id)}
           >
-            🍡 切入商店街详图（{linkedArcade.nameZh}）
+            {ui.inspectorJumpArcade(tLoc(linkedArcade).name)}
           </button>
         )}
 
@@ -144,7 +153,7 @@ export function MapSidebar({
             style={{ minHeight: 34, padding: "4px 12px", fontSize: "0.8rem" }}
             onClick={() => onSwitchToLocation("kyoto", linkedKyoto.id)}
           >
-            🗺️ 京都实景定位（{linkedKyoto.nameZh}）
+            {ui.inspectorJumpKyoto(tLoc(linkedKyoto).name)}
           </button>
         )}
 
@@ -156,7 +165,7 @@ export function MapSidebar({
             target="_blank"
             rel="noopener noreferrer"
           >
-            Google 地图
+            {ui.googleMapsBtn}
           </a>
         )}
       </div>
@@ -165,10 +174,10 @@ export function MapSidebar({
 
       <div className="tamako-filter-header" style={{ marginBottom: 0 }}>
         <span className="tamako-filter-label">
-          此处剧情剧照（{locationEvents.length}）
+          {ui.inspectorEventsTitle(locationEvents.length)}
         </span>
         <span style={{ fontSize: "0.75rem", color: "var(--tamako-ink-muted)" }}>
-          点击查看详情
+          {ui.inspectorClickHint}
         </span>
       </div>
 
@@ -176,6 +185,7 @@ export function MapSidebar({
         <div className="tamako-inspector-events">
           {locationEvents.map((ev) => {
             const ep = EPISODE_MAP[ev.episodeId];
+            const evText = tEvent(ev);
             const active = selectedEventId === ev.id;
             return (
               <button
@@ -198,17 +208,24 @@ export function MapSidebar({
                 <span className="tamako-inspector-ev-body">
                   <span className={`tamako-scene-tag tone-${ev.tone}`}>
                     <SceneIcon kind={ev.icon} size={11} />
-                    <span>{ep?.shortLabel ?? ev.sceneBadge}</span>
+                    <span>{ep ? tEp(ep).shortLabel : evText.sceneBadge}</span>
                   </span>
                   <strong className="tamako-inspector-ev-title">
-                    {ev.titleZh}
+                    {evText.title}
                   </strong>
                   <span className="tamako-inspector-ev-avatars">
                     {ev.characterIds.slice(0, 4).map((cid) => {
                       const ch = CHARACTER_MAP[cid];
-                      return ch ? (
-                        <img key={cid} src={ch.avatarUrl} alt={ch.nameZh} title={ch.nameZh} />
-                      ) : null;
+                      if (!ch) return null;
+                      const chName = tChar(ch).name;
+                      return (
+                        <img
+                          key={cid}
+                          src={ch.avatarUrl}
+                          alt={chName}
+                          title={chName}
+                        />
+                      );
                     })}
                   </span>
                 </span>
@@ -220,8 +237,8 @@ export function MapSidebar({
         <div className="tamako-sidebar-empty">
           <p style={{ margin: "0 0 8px" }}>
             {location.id === "kyoto-demachiza"
-              ? "「出町座」是十周年纪念特别重映的举办影院，走出影厅便是「出町桝形商店街」拱廊。"
-              : "当前筛选条件下，该地点暂无命中剧情。"}
+              ? ui.inspectorDemachizaNote
+              : ui.inspectorEmpty}
           </p>
           {hasFilters && (
             <button
@@ -229,7 +246,7 @@ export function MapSidebar({
               className="tamako-pill-btn is-custard"
               onClick={onResetFilters}
             >
-              重置筛选查看全部
+              {ui.inspectorResetBtn}
             </button>
           )}
         </div>

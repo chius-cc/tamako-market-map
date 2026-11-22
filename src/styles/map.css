@@ -833,6 +833,7 @@
 
   .tamako-view-btn {
     flex: 1;
+    min-width: 0;
     padding: 4px 8px;
     font-size: 0.8rem;
   }
@@ -840,5 +841,27 @@
   .tamako-dera-bar .tamako-pill-btn {
     padding: 4px 9px;
     font-size: 0.76rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .tamako-view-switch {
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .tamako-view-btn {
+    min-height: 32px;
+    padding: 3px 4px;
+    gap: 3px;
+    font-size: 0.69rem;
+    letter-spacing: -0.01em;
+  }
+
+  .tamako-view-btn .tamako-ep-count {
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    font-size: 0.63rem;
   }
 }

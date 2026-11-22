@@ -1,6 +1,10 @@
 import { CHARACTER_MAP } from "../data/characters";
 import { EPISODE_MAP, EPISODES } from "../data/episodes";
 import { LOCATION_MAP } from "../data/locations";
+import { CHARACTERS_EN } from "../i18n/charactersI18n";
+import { EPISODES_EN } from "../i18n/episodesI18n";
+import { EVENTS_EN, EVENTS_JA } from "../i18n/eventsI18n";
+import { LOCATIONS_EN } from "../i18n/locationsI18n";
 import type {
   FilterState,
   MapViewMode,
@@ -66,26 +70,49 @@ export function eventMatchesQuery(event: StoryEvent, rawQuery: string): boolean 
   const charNames = event.characterIds
     .map((id) => {
       const c = CHARACTER_MAP[id];
-      return c ? `${c.nameZh} ${c.nameJa}` : "";
+      const cEn = CHARACTERS_EN[id]?.name ?? "";
+      return c ? `${c.nameZh} ${c.nameJa} ${cEn}` : cEn;
     })
     .join(" ");
+
+  const evEn = EVENTS_EN[event.id];
+  const evJa = EVENTS_JA[event.id];
+  const epEn = EPISODES_EN[event.episodeId];
+  const arcadeEn = event.arcadeLocationId
+    ? LOCATIONS_EN[event.arcadeLocationId]?.name ?? ""
+    : "";
+  const kyotoEn = event.kyotoLocationId
+    ? LOCATIONS_EN[event.kyotoLocationId]?.name ?? ""
+    : "";
 
   const haystack = [
     event.titleZh,
     event.titleJa,
+    evEn?.title ?? "",
+    evJa?.title ?? "",
     event.sceneBadge,
+    evEn?.sceneBadge ?? "",
     event.summaryZh,
+    evEn?.summary ?? "",
+    evJa?.summary ?? "",
     event.quoteZh ?? "",
     event.quoteJa ?? "",
+    evEn?.quoteTranslated ?? "",
     event.staffNoteZh,
     event.tags.join(" "),
+    evEn?.tags.join(" ") ?? "",
+    evJa?.tags.join(" ") ?? "",
     ep?.shortLabel ?? "",
     ep?.titleZh ?? "",
     ep?.titleJa ?? "",
+    epEn?.shortLabel ?? "",
+    epEn?.title ?? "",
     arcadeLoc?.nameZh ?? "",
     arcadeLoc?.nameJa ?? "",
+    arcadeEn,
     kyotoLoc?.nameZh ?? "",
     kyotoLoc?.nameJa ?? "",
+    kyotoEn,
     charNames,
   ]
     .join(" ")

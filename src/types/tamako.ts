@@ -1,3 +1,5 @@
+export type Locale = "zh" | "en" | "ja";
+
 export type WorkKind = "tv" | "movie" | "short";
 
 export type WagashiTone =

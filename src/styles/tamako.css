@@ -81,11 +81,54 @@
   color: var(--tamako-ink-muted);
 }
 
+.tamako-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 .tamako-topbar-actions {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   flex-wrap: nowrap;
+}
+
+/* Segmented Trilingual Capsule: 中 | EN | 日 */
+.tamako-lang-switch {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  border-radius: var(--tamako-radius-pill);
+  background: var(--tamako-bg-custard);
+  border: 1.5px solid var(--tamako-frame-gold);
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.tamako-lang-btn {
+  min-width: 28px;
+  height: 30px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: var(--tamako-radius-pill);
+  background: transparent;
+  color: var(--tamako-ink-roast);
+  font-family: var(--tamako-font-display);
+  font-size: 0.75rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.16s var(--tamako-ease);
+}
+
+.tamako-lang-btn:hover {
+  color: var(--tamako-ink);
+}
+
+.tamako-lang-btn[aria-pressed='true'] {
+  background: var(--tamako-ink);
+  color: #ffffff;
 }
 
 .tamako-nav-pill {
@@ -1016,18 +1059,18 @@
 /* ==========================================================================
    Responsive Breakpoints for Topbar & Modals
    ========================================================================== */
-@media (max-width: 1180px) {
+@media (max-width: 1280px) {
   .tamako-brand-sub {
     display: none;
   }
 
   .tamako-nav-pill {
-    padding: 5px 9px;
-    font-size: 0.79rem;
+    padding: 4px 8px;
+    font-size: 0.77rem;
   }
 }
 
-@media (max-width: 960px) {
+@media (max-width: 1120px) {
   .tamako-topbar-actions {
     display: none;
   }
@@ -1037,7 +1080,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 680px) {
   .tamako-topbar {
     background: var(--tamako-drawer-pink);
     border-bottom: 1.5px solid #f66e75;
@@ -1045,18 +1088,50 @@
 
   .tamako-topbar-inner {
     flex-wrap: wrap;
-    padding: 6px 10px 8px;
+    padding: 6px 8px 8px;
     gap: 6px;
   }
 
+  .tamako-brand-lockup {
+    gap: 6px;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
   .tamako-brand-avatar {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border-color: #ffffff;
   }
 
   .tamako-brand-title {
-    font-size: 0.95rem;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tamako-topbar-right {
+    gap: 5px;
+  }
+
+  .tamako-lang-btn {
+    min-width: 24px;
+    height: 27px;
+    padding: 0 5px;
+    font-size: 0.7rem;
+  }
+
+  .tamako-mobile-quickbtn {
+    min-height: 33px;
+    padding: 3px 8px;
+    font-size: 0.74rem;
+  }
+
+  .tamako-burger {
+    width: 34px;
+    height: 34px;
+    padding: 9px 7px;
   }
 
   .tamako-topbar-switch {

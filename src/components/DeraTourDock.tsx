@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useI18n } from "../i18n";
 
 export function DeraTourDock({
   mascotHint,
@@ -15,23 +16,24 @@ export function DeraTourDock({
   onNext: () => void;
   onOpenCurrentModal: () => void;
 }) {
+  const { ui } = useI18n();
   const [bubbleOpen, setBubbleOpen] = useState<boolean>(() =>
-    typeof window !== "undefined" ? window.innerWidth >= 900 : true
+    typeof window !== "undefined" ? window.innerWidth >= 900 : false
   );
 
   return (
-    <div className="tamako-dera-dock" aria-label="德拉导览与剧情巡游控制">
+    <div className="tamako-dera-dock" aria-label={ui.deraDockAria}>
       {bubbleOpen && (
         <div className="tamako-dera-bubble" aria-live="polite">
           <div className="tamako-dera-bubble-head">
-            <strong>德拉·莫奇马兹导览</strong>
+            <strong>{ui.deraGuideTitle}</strong>
             <button
               type="button"
               className="tamako-dera-collapse"
-              aria-label="收起德拉提示气泡"
+              aria-label={ui.deraToggleCollapseAria}
               onClick={() => setBubbleOpen(false)}
             >
-              收起
+              {ui.collapseBtn}
             </button>
           </div>
           <p>{mascotHint}</p>
@@ -43,12 +45,14 @@ export function DeraTourDock({
           type="button"
           className="tamako-dera-avatar-btn"
           aria-expanded={bubbleOpen}
-          aria-label={bubbleOpen ? "收起德拉搭话框" : "展开德拉搭话框"}
+          aria-label={
+            bubbleOpen ? ui.deraToggleCollapseAria : ui.deraToggleExpandAria
+          }
           onClick={() => setBubbleOpen((v) => !v)}
         >
           <img
             src="/images/avatars/dera.webp"
-            alt="德拉"
+            alt="Dera"
             width={40}
             height={40}
           />
@@ -59,9 +63,9 @@ export function DeraTourDock({
           className="tamako-pill-btn"
           disabled={totalFiltered === 0}
           onClick={onPrev}
-          aria-label="上一幕剧情"
+          aria-label={ui.prevSceneAria}
         >
-          ← 上一幕
+          {ui.prevScene}
         </button>
 
         <button
@@ -70,7 +74,7 @@ export function DeraTourDock({
           disabled={totalFiltered === 0}
           onClick={onOpenCurrentModal}
         >
-          🎬 巡游
+          {ui.tourLabel}
           {totalFiltered > 0
             ? ` ${activeIndex >= 0 ? activeIndex + 1 : 1}/${totalFiltered}`
             : " 0"}
@@ -81,9 +85,9 @@ export function DeraTourDock({
           className="tamako-pill-btn is-primary"
           disabled={totalFiltered === 0}
           onClick={onNext}
-          aria-label="下一幕剧情"
+          aria-label={ui.nextSceneAria}
         >
-          下一幕 →
+          {ui.nextScene}
         </button>
       </div>
     </div>
