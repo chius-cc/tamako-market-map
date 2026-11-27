@@ -23,7 +23,7 @@
 
 ## 三、GitHub Actions 凭证与权限要求
 
-仓库 `chius-n/tamako-market-map` 已配置以下 Secrets：
+仓库 `chius-cc/tamako-market-map` 已配置以下 Secrets：
 
 - `CLOUDFLARE_ACCOUNT_ID`
 - `CLOUDFLARE_API_TOKEN`
