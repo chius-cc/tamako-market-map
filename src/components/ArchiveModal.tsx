@@ -258,7 +258,7 @@ export function ArchiveModal({
                   </a>
                   <span>·</span>
                   <a
-                    href="https://github.com/chius-me/awesome-tamako-market"
+                    href="https://github.com/chius-n/awesome-tamako-market"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

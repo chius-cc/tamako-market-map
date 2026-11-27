@@ -41,5 +41,5 @@ pnpm deploy:dry-run
 
 ## 致谢与声明
 
-- 资料与灵感参考：[tamakomarket.com](https://tamakomarket.com/)、[tamakolovestory.com](https://tamakolovestory.com/)、[出町桝形商店街专页](https://masugata.demachi.jp/tamakomarket/)、[awesome-tamako-market](https://github.com/chius-me/awesome-tamako-market) 与 [usagiyama](https://github.com/chius-me/usagiyama)。
+- 资料与灵感参考：[tamakomarket.com](https://tamakomarket.com/)、[tamakolovestory.com](https://tamakolovestory.com/)、[出町桝形商店街专页](https://masugata.demachi.jp/tamakomarket/)、[awesome-tamako-market](https://github.com/chius-n/awesome-tamako-market) 与 [usagiyama](https://github.com/chius-n/usagiyama)。
 - 本站为爱好者制作的**非官方同人交互地图与圣地巡礼指南**，动画剧照、角色与设定著作权归 **©京都アニメーション／うさぎ山商店街** 所有；京都矢量地图数据来自 © OpenFreeMap 与 © OpenStreetMap contributors。
